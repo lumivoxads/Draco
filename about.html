@@ -1,193 +1,322 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="cunnet-dark no-js" lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="About Draco — Enterprise Loyalty Solutions Partner. Learn our story, vision, and capabilities.">
-  <title>About — Draco</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/pages.css">
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <title>About — Draco · Enterprise Loyalty Solutions Partner</title>
+   <meta name="description" content="Draco is an enterprise loyalty solutions partner helping organisations build loyalty ecosystems that improve retention, strengthen brand loyalty and create long-term business value.">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
+
+   <!-- SEO — replace www.draco.com with the real production domain -->
+   <link rel="canonical" href="https://www.draco.com/about.html">
+   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+   <meta name="author" content="Draco">
+   <meta name="theme-color" content="#06070a">
+   <meta property="og:type" content="website">
+   <meta property="og:site_name" content="Draco">
+   <meta property="og:title" content="About Draco — Enterprise Loyalty Solutions Partner">
+   <meta property="og:description" content="Draco is an enterprise loyalty solutions partner helping organisations build loyalty ecosystems that improve retention, strengthen brand loyalty and create long-term business value.">
+   <meta property="og:url" content="https://www.draco.com/about.html">
+   <meta property="og:image" content="https://www.draco.com/assets/og-image.jpg">
+   <meta property="og:image:width" content="1200">
+   <meta property="og:image:height" content="630">
+   <meta property="og:locale" content="en_US">
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="About Draco — Enterprise Loyalty Solutions Partner">
+   <meta name="twitter:description" content="Draco is an enterprise loyalty solutions partner helping organisations build loyalty ecosystems that improve retention and create long-term business value.">
+   <meta name="twitter:image" content="https://www.draco.com/assets/og-image.jpg">
+
+   <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
+   <link rel="stylesheet" href="template/assets/css/main.css">
+   <link rel="stylesheet" href="assets/site.css">
+   <style>
+      .about-intro{display:grid;grid-template-columns:0.9fr 1.1fr;gap:clamp(30px,6vw,90px);align-items:start;}
+      .about-intro h2{font-size:clamp(1.8rem,3.4vw,2.9rem);margin:16px 0 0;line-height:1.05;}
+      .about-intro .body p{color:var(--d-muted);font-size:1.08rem;line-height:1.7;margin:0 0 20px;}
+      .about-intro .body p:last-child{margin-bottom:0;}
+      .vm{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,26px);}
+      .vm .card h3{font-family:var(--d-ff-disp);text-transform:uppercase;font-size:1.4rem;color:var(--d-fg);}
+      @media (max-width:900px){.about-intro{grid-template-columns:1fr;}.vm{grid-template-columns:1fr;}}
+      /* FAQ (AEO/GEO) */
+      .faq{max-width:940px;}
+      .faq-item{border-top:1px solid var(--d-line);}
+      .faq-item summary{list-style:none;cursor:pointer;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--d-fg);font-weight:500;}
+      .faq-item summary::-webkit-details-marker{display:none;}
+      .faq-item summary::after{content:"+";font-size:1.5rem;line-height:1;color:var(--d-accent);}
+      .faq-item[open] summary::after{content:"\2013";}
+      .faq-item p{margin:0 0 24px;color:var(--d-muted);line-height:1.7;max-width:74ch;}
+   </style>
+
+   <!-- Structured data (SEO / AEO / GEO) -->
+   <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@graph": [
+       {
+         "@type": "Organization",
+         "@id": "https://www.draco.com/#organization",
+         "name": "Draco",
+         "url": "https://www.draco.com/",
+         "logo": "https://www.draco.com/assets/og-image.jpg",
+         "description": "Enterprise loyalty solutions partner delivering loyalty ecosystems that improve customer retention and create long-term business value.",
+         "email": "rajeshrishi@draco.com",
+         "telephone": "+971581684327",
+         "areaServed": "Worldwide"
+       },
+       {
+         "@type": "AboutPage",
+         "@id": "https://www.draco.com/about.html#webpage",
+         "url": "https://www.draco.com/about.html",
+         "name": "About Draco — Enterprise Loyalty Solutions Partner",
+         "about": { "@id": "https://www.draco.com/#organization" },
+         "description": "Draco is an enterprise loyalty solutions partner helping organisations build loyalty ecosystems that improve retention, strengthen brand loyalty and create long-term business value.",
+         "inLanguage": "en"
+       },
+       {
+         "@type": "BreadcrumbList",
+         "itemListElement": [
+           { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.draco.com/" },
+           { "@type": "ListItem", "position": 2, "name": "About", "item": "https://www.draco.com/about.html" }
+         ]
+       },
+       {
+         "@type": "FAQPage",
+         "@id": "https://www.draco.com/about.html#faq",
+         "mainEntity": [
+           { "@type": "Question", "name": "What is Draco?", "acceptedAnswer": { "@type": "Answer", "text": "Draco is an enterprise loyalty solutions partner. We design and deliver loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that help organisations improve customer retention, strengthen brand loyalty and create long-term business value." } },
+           { "@type": "Question", "name": "What services does Draco offer?", "acceptedAnswer": { "@type": "Answer", "text": "Draco builds customer loyalty end to end: enterprise loyalty programs, customer engagement strategies, membership and privilege programs, rewards and recognition, referral and advocacy programs, campaign management, performance insights, and loyalty consulting." } },
+           { "@type": "Question", "name": "Which industries does Draco serve?", "acceptedAnswer": { "@type": "Answer", "text": "Draco works across retail, hospitality, restaurants and cafés, fuel and energy, healthcare, automotive, banking and financial services, telecommunications, entertainment, e-commerce, lifestyle, and enterprise organisations." } },
+           { "@type": "Question", "name": "How is Draco different from a rewards platform?", "acceptedAnswer": { "@type": "Answer", "text": "Draco is a strategic partner, not a self-serve tool. We focus on loyalty ecosystems and long-term customer relationships aligned to measurable business outcomes — combining strategy, engagement models and analytics — rather than one-time transactions." } },
+           { "@type": "Question", "name": "How do I start working with Draco?", "acceptedAnswer": { "@type": "Answer", "text": "Get in touch through our contact page, email rajeshrishi@draco.com, or WhatsApp +971 58 168 4327. We'll assess your goals and design a loyalty model suited to your customers." } },
+           { "@type": "Question", "name": "Where is Draco based?", "acceptedAnswer": { "@type": "Answer", "text": "Draco is remote-first and partners with brands worldwide." } }
+         ]
+       }
+     ]
+   }
+   </script>
 </head>
+
 <body>
+   <!-- header -->
+   <header class="draco-header">
+      <a class="draco-logo" href="index.html" aria-label="Draco home"><img src="assets/logo/logo-white.png" alt="Draco"></a>
+      <nav class="draco-nav" aria-label="Primary">
+         <a href="index.html">Home</a>
+         <a href="about.html" aria-current="page">About</a>
+         <a href="contact.html">Contact</a>
+      </nav>
+      <a class="draco-cta" href="contact.html">Get in touch <i class="fa-regular fa-arrow-right"></i></a>
+      <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+   </header>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="site-nav__inner">
-      <a href="index.html" class="site-nav__logo">
-        <img src="assets/logo/logo.jpg" alt="Draco">
-        <span class="site-nav__logo-text">DRACO</span>
-      </a>
-      <button class="site-nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="site-nav__links">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+   <main id="main">
+   <!-- page hero -->
+   <section class="page-hero">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="wrap">
+         <span class="d-eyebrow draco-anim d1">About Draco</span>
+         <h1 class="d-display page-title draco-anim d2">Your strategic<br><span class="accent">loyalty</span> partner</h1>
+         <p class="page-lead draco-anim d3">
+            Draco is an enterprise loyalty solutions partner dedicated to helping businesses build
+            stronger, more meaningful relationships with their customers — combining engagement strategy,
+            rewards ecosystems and loyalty initiatives that improve retention and create lasting value.
+         </p>
       </div>
-    </div>
-  </nav>
+   </section>
 
-  <main class="page-content">
-    <header class="page-hero">
-      <div class="page-hero__inner">
-        <p class="page-hero__eyebrow">About Draco</p>
-        <h1 class="page-hero__title">Creating Meaningful Connections That Inspire Loyalty</h1>
-        <p class="page-hero__subtitle">Draco is an Enterprise Loyalty Solutions Partner helping businesses build stronger, more meaningful relationships with their customers.</p>
+   <!-- intro -->
+   <section class="d-section">
+      <div class="wrap about-intro">
+         <div>
+            <span class="d-eyebrow">Who we are</span>
+            <h2 class="d-display" style="text-transform:none;">Retention over acquisition.</h2>
+         </div>
+         <div class="body">
+            <p>Draco partners with organisations that believe customer loyalty is a strategic business
+               asset. Our focus is on creating engagement-driven experiences that encourage repeat
+               interactions, build trust and support sustainable growth across diverse industries.</p>
+            <p>Customer acquisition is becoming increasingly expensive, making retention more valuable
+               than ever. Draco helps organisations create loyalty ecosystems that encourage long-term
+               relationships instead of one-time transactions — every engagement aligned to measurable outcomes.</p>
+         </div>
       </div>
-    </header>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Who We Are</p>
-        <h2 class="page-section__title">Your Strategic Loyalty Partner</h2>
-        <p class="page-section__text">Draco is an Enterprise Loyalty Solutions Partner dedicated to helping businesses build stronger, more meaningful relationships with their customers. By combining customer engagement strategies, rewards ecosystems, and loyalty initiatives, Draco enables organizations to improve customer retention, strengthen brand loyalty, and create long-term business value.</p>
-        <p class="page-section__text">Draco partners with organizations that believe customer loyalty is a strategic business asset. Our focus is on creating engagement-driven experiences that encourage repeat interactions, build trust, and support sustainable growth across diverse industries.</p>
+   <hr class="d-hr">
+
+   <!-- vision / mission -->
+   <section class="d-section">
+      <div class="wrap">
+         <div class="section-head">
+            <span class="d-eyebrow">Where we're headed</span>
+            <h2 class="d-display" style="text-transform:none;">Vision &amp; mission</h2>
+         </div>
+         <div class="vm">
+            <div class="card">
+               <h3>Vision</h3>
+               <p>To become the trusted enterprise loyalty solutions partner for businesses seeking to
+                  build stronger customer relationships through innovative engagement strategies and
+                  exceptional customer experiences.</p>
+            </div>
+            <div class="card">
+               <h3>Mission</h3>
+               <p>To empower organisations with intelligent loyalty solutions that inspire customer
+                  engagement, strengthen brand loyalty and create sustainable business growth through
+                  meaningful customer relationships.</p>
+            </div>
+         </div>
       </div>
-    </section>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Why Draco</p>
-        <h2 class="page-section__title">Retention Over Acquisition</h2>
-        <p class="page-section__text">Customer acquisition is becoming increasingly expensive, making customer retention more valuable than ever. Draco helps organizations create loyalty ecosystems that encourage long-term relationships instead of one-time transactions. Every engagement is aligned with business objectives and measurable outcomes.</p>
+   <hr class="d-hr">
+
+   <!-- capabilities -->
+   <section class="d-section">
+      <div class="wrap">
+         <div class="section-head">
+            <span class="d-eyebrow">What we deliver</span>
+            <h2 class="d-display" style="text-transform:none;">Comprehensive loyalty capabilities</h2>
+            <p>Draco designs and delivers customer loyalty ecosystems tailored to the unique goals of every organisation.</p>
+         </div>
+         <div class="d-grid cols-4">
+            <div class="card"><span class="num">01</span><h3>Enterprise Loyalty Programs</h3><p>Full-lifecycle loyalty programs engineered for scale — from strategy through launch and optimisation.</p></div>
+            <div class="card"><span class="num">02</span><h3>Customer Engagement</h3><p>Data-informed engagement models that turn passive customers into active, repeat advocates.</p></div>
+            <div class="card"><span class="num">03</span><h3>Membership &amp; Privilege</h3><p>Tiered memberships and privilege schemes that recognise and reward your most valuable customers.</p></div>
+            <div class="card"><span class="num">04</span><h3>Rewards &amp; Recognition</h3><p>Reward ecosystems that make every interaction feel earned, worthwhile and worth returning for.</p></div>
+            <div class="card"><span class="num">05</span><h3>Referral &amp; Advocacy</h3><p>Programs that turn satisfied customers into a measurable, compounding growth channel.</p></div>
+            <div class="card"><span class="num">06</span><h3>Campaign Management</h3><p>End-to-end campaign design and execution, aligned to clear business objectives.</p></div>
+            <div class="card"><span class="num">07</span><h3>Performance Insights</h3><p>Analytics and reporting that connect loyalty activity directly to business outcomes.</p></div>
+            <div class="card"><span class="num">08</span><h3>Loyalty Consulting</h3><p>Strategic guidance to help you build the right loyalty model from the ground up.</p></div>
+         </div>
       </div>
-    </section>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Our Story</p>
-        <h2 class="page-section__title">Built on Relationships</h2>
-        <p class="page-section__text">Founded with the vision of helping businesses build stronger customer relationships, Draco has evolved into a trusted enterprise loyalty solutions partner. Our approach combines strategic thinking, customer insight, and innovative engagement models to help organizations deliver memorable customer experiences.</p>
+   <hr class="d-hr">
+
+   <!-- values -->
+   <section class="d-section">
+      <div class="wrap">
+         <div class="section-head">
+            <span class="d-eyebrow">What guides us</span>
+            <h2 class="d-display" style="text-transform:none;">Core values</h2>
+         </div>
+         <div>
+            <div class="value-row"><div class="k">Customer First</div><div class="v">Every decision starts with the customer's experience and their long-term value.</div></div>
+            <div class="value-row"><div class="k">Innovation</div><div class="v">We bring fresh, intelligent engagement models to every partnership.</div></div>
+            <div class="value-row"><div class="k">Trust</div><div class="v">Relationships built on transparency, reliability and measurable results.</div></div>
+            <div class="value-row"><div class="k">Excellence</div><div class="v">We hold our work to an enterprise standard, end to end.</div></div>
+            <div class="value-row"><div class="k">Growth</div><div class="v">We build for sustainable, long-term business value — not one-time wins.</div></div>
+         </div>
       </div>
-    </section>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Vision &amp; Mission</p>
-        <h2 class="page-section__title">Where We're Headed</h2>
-        <div class="card-grid">
-          <div class="card">
-            <h3 class="card__title">Vision</h3>
-            <p class="card__text">To become the trusted enterprise loyalty solutions partner for businesses seeking to build stronger customer relationships through innovative engagement strategies and exceptional customer experiences.</p>
-          </div>
-          <div class="card">
-            <h3 class="card__title">Mission</h3>
-            <p class="card__text">To empower organizations with intelligent loyalty solutions that inspire customer engagement, strengthen brand loyalty, and create sustainable business growth through meaningful customer relationships.</p>
-          </div>
-        </div>
+   <hr class="d-hr">
+
+   <!-- industries -->
+   <section class="d-section">
+      <div class="wrap">
+         <div class="section-head">
+            <span class="d-eyebrow">Across sectors</span>
+            <h2 class="d-display" style="text-transform:none;">Industries we serve</h2>
+         </div>
+         <div>
+            <span class="chip">Retail</span><span class="chip">Hospitality</span><span class="chip">Restaurants &amp; Cafés</span>
+            <span class="chip">Fuel &amp; Energy</span><span class="chip">Healthcare</span><span class="chip">Automotive</span>
+            <span class="chip">Banking &amp; Financial Services</span><span class="chip">Telecommunications</span><span class="chip">Entertainment</span>
+            <span class="chip">E-Commerce</span><span class="chip">Lifestyle</span><span class="chip">Enterprise Organisations</span>
+         </div>
       </div>
-    </section>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Core Values</p>
-        <h2 class="page-section__title">What Guides Us</h2>
-        <div class="values-list">
-          <span class="value-badge">Customer First</span>
-          <span class="value-badge">Innovation</span>
-          <span class="value-badge">Trust</span>
-          <span class="value-badge">Excellence</span>
-          <span class="value-badge">Growth</span>
-        </div>
+   <hr class="d-hr">
+
+   <!-- FAQ (AEO/GEO) -->
+   <section class="d-section" id="faq">
+      <div class="wrap">
+         <div class="section-head">
+            <span class="d-eyebrow">Questions</span>
+            <h2 class="d-display" style="text-transform:none;">Frequently asked</h2>
+         </div>
+         <div class="faq">
+            <details class="faq-item" open>
+               <summary>What is Draco?</summary>
+               <p>Draco is an enterprise loyalty solutions partner. We design and deliver loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that help organisations improve customer retention, strengthen brand loyalty and create long-term business value.</p>
+            </details>
+            <details class="faq-item">
+               <summary>What services does Draco offer?</summary>
+               <p>Draco builds customer loyalty end to end: enterprise loyalty programs, customer engagement strategies, membership and privilege programs, rewards and recognition, referral and advocacy programs, campaign management, performance insights, and loyalty consulting.</p>
+            </details>
+            <details class="faq-item">
+               <summary>Which industries does Draco serve?</summary>
+               <p>Draco works across retail, hospitality, restaurants and cafés, fuel and energy, healthcare, automotive, banking and financial services, telecommunications, entertainment, e-commerce, lifestyle, and enterprise organisations.</p>
+            </details>
+            <details class="faq-item">
+               <summary>How is Draco different from a rewards platform?</summary>
+               <p>Draco is a strategic partner, not a self-serve tool. We focus on loyalty ecosystems and long-term customer relationships aligned to measurable business outcomes — combining strategy, engagement models and analytics — rather than one-time transactions.</p>
+            </details>
+            <details class="faq-item">
+               <summary>How do I start working with Draco?</summary>
+               <p>Get in touch through our <a href="contact.html">contact page</a>, email rajeshrishi@draco.com, or WhatsApp +971 58 168 4327. We'll assess your goals and design a loyalty model suited to your customers.</p>
+            </details>
+            <details class="faq-item">
+               <summary>Where is Draco based?</summary>
+               <p>Draco is remote-first and partners with brands worldwide.</p>
+            </details>
+         </div>
       </div>
-    </section>
+   </section>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Our Philosophy</p>
-        <h2 class="page-section__title">Loyalty Through Experience</h2>
-        <p class="page-section__text">At Draco, we believe loyalty is built through meaningful experiences rather than rewards alone. Every customer interaction is an opportunity to strengthen trust, encourage advocacy, and create long-term value for both businesses and their customers.</p>
+   <!-- CTA band -->
+   <section class="cta-band">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="wrap">
+         <h2 class="d-display">Let's build loyalty<br>worth <span class="accent">keeping.</span></h2>
+         <p>Creating meaningful connections that inspire loyalty — for the world's most customer-obsessed brands.</p>
+         <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
       </div>
-    </section>
+   </section>
+   </main>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">What We Do</p>
-        <h2 class="page-section__title">Comprehensive Loyalty Solutions</h2>
-        <p class="page-section__text">Draco designs and delivers customer loyalty ecosystems including loyalty programs, rewards initiatives, membership experiences, engagement campaigns, and customer retention strategies tailored to the unique goals of every organization.</p>
+   <!-- footer -->
+   <footer class="site-footer">
+      <div class="wrap">
+         <div class="top">
+            <div class="brand">
+               <img src="assets/logo/logo-white.png" alt="Draco">
+               <p>Enterprise loyalty solutions partner — turning customer engagement into lasting business value.</p>
+            </div>
+            <div class="cols">
+               <div>
+                  <h4>Navigate</h4>
+                  <ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul>
+               </div>
+               <div>
+                  <h4>Connect</h4>
+                  <ul><li><a href="#">LinkedIn</a></li><li><a href="#">Instagram</a></li><li><a href="#">WhatsApp</a></li></ul>
+               </div>
+            </div>
+         </div>
+         <div class="bottom">
+            <span>© 2026 Draco®. All rights reserved.</span>
+            <span class="socials">
+               <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+               <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+               <a href="https://wa.me/971581684327" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </span>
+         </div>
       </div>
-    </section>
+   </footer>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Our Capabilities</p>
-        <h2 class="page-section__title">What We Deliver</h2>
-        <div class="capabilities-grid">
-          <div class="capability-item">Enterprise Loyalty Programs</div>
-          <div class="capability-item">Customer Engagement Strategies</div>
-          <div class="capability-item">Membership &amp; Privilege Programs</div>
-          <div class="capability-item">Rewards &amp; Recognition Solutions</div>
-          <div class="capability-item">Referral &amp; Advocacy Programs</div>
-          <div class="capability-item">Campaign Management</div>
-          <div class="capability-item">Performance Insights</div>
-          <div class="capability-item">Loyalty Consulting</div>
-        </div>
-      </div>
-    </section>
+   <!-- mobile menu -->
+   <div class="draco-mobile" id="dracoMobile">
+      <button class="close" id="dracoClose" aria-label="Close menu"><i class="fa-regular fa-xmark"></i></button>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+   </div>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Industries We Serve</p>
-        <h2 class="page-section__title">Across Sectors</h2>
-        <div class="industries-grid">
-          <span class="industry-tag">Retail</span>
-          <span class="industry-tag">Hospitality</span>
-          <span class="industry-tag">Restaurants &amp; Cafés</span>
-          <span class="industry-tag">Fuel &amp; Energy</span>
-          <span class="industry-tag">Healthcare</span>
-          <span class="industry-tag">Automotive</span>
-          <span class="industry-tag">Banking &amp; Financial Services</span>
-          <span class="industry-tag">Telecommunications</span>
-          <span class="industry-tag">Entertainment</span>
-          <span class="industry-tag">E-Commerce</span>
-          <span class="industry-tag">Lifestyle</span>
-          <span class="industry-tag">Enterprise Organizations</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Why Businesses Choose Draco</p>
-        <h2 class="page-section__title">A Partner You Can Trust</h2>
-        <p class="page-section__text">Businesses choose Draco because of our strategic approach, scalable solutions, and commitment to creating measurable customer engagement outcomes. We focus on building long-term partnerships that deliver sustainable business growth.</p>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-section__inner">
-        <p class="page-section__label">Our Commitment</p>
-        <h2 class="page-section__title">Creating Lasting Value</h2>
-        <p class="page-section__text">We are committed to helping organizations build stronger customer relationships through innovative loyalty experiences that increase engagement, improve retention, and create lasting value.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <div class="site-footer__brand">
-        <p class="site-footer__brand-name">DRACO</p>
-        <p class="site-footer__tagline">Creating Meaningful Connections That Inspire Loyalty.</p>
-        <p class="site-footer__meta">&copy; 2026 Draco &middot; A Lumivox Ads Company</p>
-      </div>
-      <div class="site-footer__social">
-        <a href="#" data-social="instagram" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/instagram.svg" alt="" width="18" height="18">
-        </a>
-        <a href="#" data-social="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/linkedin.svg" alt="" width="18" height="18">
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <a href="#" class="whatsapp-float" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer">
-    <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28">
-  </a>
-
-  <script src="js/main.js"></script>
+   <script src="assets/site.js"></script>
 </body>
 </html>

@@ -1,93 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="cunnet-dark no-js" lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Contact Draco — Get in touch with our Enterprise Loyalty Solutions team.">
-  <title>Contact — Draco</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/pages.css">
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <title>Contact — Draco · Enterprise Loyalty Solutions Partner</title>
+   <meta name="description" content="Start a conversation with Draco — the enterprise loyalty solutions partner helping brands turn customer engagement into lasting business value.">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
+
+   <!-- SEO — replace www.draco.com with the real production domain -->
+   <link rel="canonical" href="https://www.draco.com/contact.html">
+   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+   <meta name="author" content="Draco">
+   <meta name="theme-color" content="#06070a">
+   <meta property="og:type" content="website">
+   <meta property="og:site_name" content="Draco">
+   <meta property="og:title" content="Contact Draco — Enterprise Loyalty Solutions Partner">
+   <meta property="og:description" content="Start a conversation with Draco — the enterprise loyalty solutions partner helping brands turn customer engagement into lasting business value.">
+   <meta property="og:url" content="https://www.draco.com/contact.html">
+   <meta property="og:image" content="https://www.draco.com/assets/og-image.jpg">
+   <meta property="og:image:width" content="1200">
+   <meta property="og:image:height" content="630">
+   <meta property="og:locale" content="en_US">
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="Contact Draco — Enterprise Loyalty Solutions Partner">
+   <meta name="twitter:description" content="Start a conversation with Draco — enterprise loyalty solutions that turn customer engagement into lasting business value.">
+   <meta name="twitter:image" content="https://www.draco.com/assets/og-image.jpg">
+
+   <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
+   <link rel="stylesheet" href="template/assets/css/main.css">
+   <link rel="stylesheet" href="assets/site.css">
+   <style>
+      .contact-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:clamp(32px,6vw,80px);align-items:start;}
+      .contact-info .item{padding:22px 0;border-top:1px solid var(--d-line);}
+      .contact-info .item:first-of-type{border-top:0;padding-top:0;}
+      .contact-info h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--d-dim);margin:0 0 8px;}
+      .contact-info a,.contact-info p{font-size:1.15rem;color:var(--d-fg);margin:0;transition:color .25s;}
+      .contact-info a:hover{color:var(--d-accent);}
+      .contact-info .sub{font-size:.95rem;color:var(--d-muted);margin-top:6px;}
+      .contact-socials{display:flex;gap:14px;margin-top:26px;}
+      .contact-socials a{width:44px;height:44px;border:1px solid var(--d-line-2);border-radius:50%;display:grid;place-items:center;color:var(--d-muted);transition:.25s;}
+      .contact-socials a:hover{color:#111;background:var(--d-accent);border-color:var(--d-accent);}
+
+      .contact-form{background:var(--d-panel);border:1px solid var(--d-line);border-radius:18px;padding:clamp(24px,3vw,40px);}
+      .field{margin-bottom:20px;}
+      .field label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--d-muted);margin-bottom:9px;}
+      .field input,.field textarea{width:100%;background:var(--d-bg);border:1px solid var(--d-line-2);border-radius:10px;
+         color:var(--d-fg);font-family:var(--d-ff-body);font-size:1rem;padding:14px 16px;transition:border-color .2s;outline:none;}
+      .field input::placeholder,.field textarea::placeholder{color:var(--d-dim);}
+      .field input:focus,.field textarea:focus{border-color:var(--d-accent);}
+      .field textarea{resize:vertical;min-height:130px;}
+      .field-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+      .form-note{font-size:.85rem;color:var(--d-dim);margin:16px 0 0;}
+      .form-ok{display:none;margin-top:18px;padding:14px 18px;border:1px solid var(--d-accent);border-radius:10px;
+         color:var(--d-accent);font-size:.95rem;}
+      .form-ok.show{display:block;}
+      @media (max-width:900px){.contact-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}}
+   </style>
+
+   <!-- Structured data (SEO / AEO / GEO) -->
+   <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@graph": [
+       {
+         "@type": "Organization",
+         "@id": "https://www.draco.com/#organization",
+         "name": "Draco",
+         "url": "https://www.draco.com/",
+         "logo": "https://www.draco.com/assets/og-image.jpg",
+         "description": "Enterprise loyalty solutions partner delivering loyalty ecosystems that improve customer retention and create long-term business value.",
+         "email": "rajeshrishi@draco.com",
+         "telephone": "+971581684327",
+         "areaServed": "Worldwide",
+         "contactPoint": {
+           "@type": "ContactPoint",
+           "telephone": "+971581684327",
+           "email": "rajeshrishi@draco.com",
+           "contactType": "sales",
+           "availableLanguage": ["English"]
+         }
+       },
+       {
+         "@type": "ContactPage",
+         "@id": "https://www.draco.com/contact.html#webpage",
+         "url": "https://www.draco.com/contact.html",
+         "name": "Contact Draco — Enterprise Loyalty Solutions Partner",
+         "about": { "@id": "https://www.draco.com/#organization" },
+         "description": "Start a conversation with Draco — the enterprise loyalty solutions partner helping brands turn customer engagement into lasting business value.",
+         "inLanguage": "en"
+       },
+       {
+         "@type": "BreadcrumbList",
+         "itemListElement": [
+           { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.draco.com/" },
+           { "@type": "ListItem", "position": 2, "name": "Contact", "item": "https://www.draco.com/contact.html" }
+         ]
+       }
+     ]
+   }
+   </script>
 </head>
+
 <body>
+   <!-- header -->
+   <header class="draco-header">
+      <a class="draco-logo" href="index.html" aria-label="Draco home"><img src="assets/logo/logo-white.png" alt="Draco"></a>
+      <nav class="draco-nav" aria-label="Primary">
+         <a href="index.html">Home</a>
+         <a href="about.html">About</a>
+         <a href="contact.html" aria-current="page">Contact</a>
+      </nav>
+      <a class="draco-cta" href="contact.html">Get in touch <i class="fa-regular fa-arrow-right"></i></a>
+      <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+   </header>
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="site-nav__inner">
-      <a href="index.html" class="site-nav__logo">
-        <img src="assets/logo/logo.jpg" alt="Draco">
-        <span class="site-nav__logo-text">DRACO</span>
-      </a>
-      <button class="site-nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="site-nav__links">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+   <main id="main">
+   <!-- page hero -->
+   <section class="page-hero">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="wrap">
+         <span class="d-eyebrow draco-anim d1">Contact</span>
+         <h1 class="d-display page-title draco-anim d2">Let's start a<br><span class="accent">conversation.</span></h1>
+         <p class="page-lead draco-anim d3">
+            Tell us about your customers and your goals. We'll show you how a Draco loyalty ecosystem
+            can turn everyday engagement into lasting business value.
+         </p>
       </div>
-    </div>
-  </nav>
+   </section>
 
-  <main class="page-content">
-    <header class="page-hero">
-      <div class="page-hero__inner">
-        <p class="page-hero__eyebrow">Contact Us</p>
-        <h1 class="page-hero__title">Let's Build Lasting Loyalty</h1>
-        <p class="page-hero__subtitle">Reach out to our team to discuss how Draco can help strengthen your customer relationships.</p>
+   <!-- contact -->
+   <section class="d-section">
+      <div class="wrap contact-grid">
+         <!-- details -->
+         <div class="contact-info draco-anim d2">
+            <div class="item">
+               <h4>Email us</h4>
+               <a href="mailto:rajeshrishi@draco.com">rajeshrishi@draco.com</a>
+               <p class="sub">We reply within one business day.</p>
+            </div>
+            <div class="item">
+               <h4>Call us</h4>
+               <a href="tel:+971581684327">+971 58 168 4327</a>
+               <p class="sub">Sun–Thu, 9:00–18:00 (GST)</p>
+            </div>
+            <div class="item">
+               <h4>WhatsApp</h4>
+               <a href="https://wa.me/971581684327" target="_blank" rel="noopener noreferrer">+971 58 168 4327</a>
+               <p class="sub">Message us anytime</p>
+            </div>
+            <div class="item">
+               <h4>Where we work</h4>
+               <p>Remote-first</p>
+               <p class="sub">Partnering with brands worldwide</p>
+            </div>
+            <div class="contact-socials">
+               <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+               <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+               <a href="https://wa.me/971581684327" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+         </div>
+
+         <!-- form -->
+         <div class="contact-form draco-anim d3">
+            <form id="dracoForm" novalidate>
+               <div class="field-row">
+                  <div class="field">
+                     <label for="name">Full name</label>
+                     <input type="text" id="name" name="name" placeholder="Jane Doe" required>
+                  </div>
+                  <div class="field">
+                     <label for="email">Work email</label>
+                     <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+                  </div>
+               </div>
+               <div class="field-row">
+                  <div class="field">
+                     <label for="company">Company</label>
+                     <input type="text" id="company" name="company" placeholder="Company name">
+                  </div>
+                  <div class="field">
+                     <label for="industry">Industry</label>
+                     <input type="text" id="industry" name="industry" placeholder="e.g. Retail, Hospitality">
+                  </div>
+               </div>
+               <div class="field">
+                  <label for="message">How can we help?</label>
+                  <textarea id="message" name="message" placeholder="Tell us about your loyalty goals…" required></textarea>
+               </div>
+               <button type="submit" class="draco-btn">Send message <i class="fa-regular fa-arrow-right"></i></button>
+               <p class="form-note">This form is a placeholder — connect it to your email service or CRM to go live.</p>
+               <div class="form-ok" id="formOk"><i class="fa-regular fa-circle-check"></i> Thanks — your message is ready. Wire this form to a backend to start receiving enquiries.</div>
+            </form>
+         </div>
       </div>
-    </header>
+   </section>
+   </main>
 
-    <section class="page-section">
-      <div class="page-section__inner">
-        <div class="contact-intro">
-          <p class="page-section__text">Partner with Draco to create engagement-driven experiences that strengthen trust and deliver sustainable growth. Our team is ready to help you design loyalty solutions tailored to your goals.</p>
-        </div>
-        <div class="contact-cards" data-contacts></div>
+   <!-- footer -->
+   <footer class="site-footer">
+      <div class="wrap">
+         <div class="top">
+            <div class="brand">
+               <img src="assets/logo/logo-white.png" alt="Draco">
+               <p>Enterprise loyalty solutions partner — turning customer engagement into lasting business value.</p>
+            </div>
+            <div class="cols">
+               <div>
+                  <h4>Navigate</h4>
+                  <ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul>
+               </div>
+               <div>
+                  <h4>Connect</h4>
+                  <ul><li><a href="#">LinkedIn</a></li><li><a href="#">Instagram</a></li><li><a href="#">WhatsApp</a></li></ul>
+               </div>
+            </div>
+         </div>
+         <div class="bottom">
+            <span>© 2026 Draco®. All rights reserved.</span>
+            <span class="socials">
+               <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+               <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+               <a href="https://wa.me/971581684327" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </span>
+         </div>
       </div>
-    </section>
+   </footer>
 
-    <section class="contact-cta">
-      <h2 class="contact-cta__title">Prefer WhatsApp?</h2>
-      <p class="contact-cta__text">Chat with us directly for a quick response.</p>
-      <a href="#" class="contact-cta__btn" data-whatsapp>
-        <img src="assets/icons/whatsapp.svg" alt="" width="20" height="20">
-        Chat on WhatsApp
-      </a>
-      <div class="contact-social">
-        <a href="#" data-social="instagram" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/instagram.svg" alt="" width="20" height="20">
-        </a>
-        <a href="#" data-social="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/linkedin.svg" alt="" width="20" height="20">
-        </a>
-      </div>
-    </section>
-  </main>
+   <!-- mobile menu -->
+   <div class="draco-mobile" id="dracoMobile">
+      <button class="close" id="dracoClose" aria-label="Close menu"><i class="fa-regular fa-xmark"></i></button>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+   </div>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <div class="site-footer__brand">
-        <p class="site-footer__brand-name">DRACO</p>
-        <p class="site-footer__tagline">Creating Meaningful Connections That Inspire Loyalty.</p>
-        <p class="site-footer__meta">&copy; 2026 Draco &middot; A Lumivox Ads Company</p>
-      </div>
-      <div class="site-footer__social">
-        <a href="#" data-social="instagram" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/instagram.svg" alt="" width="18" height="18">
-        </a>
-        <a href="#" data-social="linkedin" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-          <img src="assets/icons/linkedin.svg" alt="" width="18" height="18">
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <a href="#" class="whatsapp-float" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer">
-    <img src="assets/icons/whatsapp.svg" alt="" width="28" height="28">
-  </a>
-
-  <script src="js/main.js"></script>
+   <script src="assets/site.js"></script>
+   <script>
+      (function () {
+         var f = document.getElementById('dracoForm');
+         if (!f) return;
+         f.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!f.checkValidity()) { f.reportValidity(); return; }
+            document.getElementById('formOk').classList.add('show');
+         });
+      })();
+   </script>
 </body>
 </html>

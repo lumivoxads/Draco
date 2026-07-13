@@ -1,117 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="cunnet-dark no-js" lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Draco — Enterprise Loyalty Solutions Partner. Creating meaningful connections that inspire loyalty.">
-  <title>Draco — Enterprise Loyalty Solutions</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/home.css">
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <title>Draco — Enterprise Loyalty Solutions Partner</title>
+   <meta name="description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
+
+   <!-- SEO — replace www.draco.com with the real production domain -->
+   <link rel="canonical" href="https://www.draco.com/">
+   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+   <meta name="author" content="Draco">
+   <meta name="theme-color" content="#06070a">
+   <meta name="keywords" content="enterprise loyalty programs, customer loyalty solutions, loyalty ecosystem, customer engagement, rewards and recognition, membership programs, customer retention, loyalty consulting">
+   <meta property="og:type" content="website">
+   <meta property="og:site_name" content="Draco">
+   <meta property="og:title" content="Draco — Enterprise Loyalty Solutions Partner">
+   <meta property="og:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta property="og:url" content="https://www.draco.com/">
+   <meta property="og:image" content="https://www.draco.com/assets/og-image.jpg">
+   <meta property="og:image:width" content="1200">
+   <meta property="og:image:height" content="630">
+   <meta property="og:image:alt" content="Draco — Enterprise Loyalty, Engineered.">
+   <meta property="og:locale" content="en_US">
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="Draco — Enterprise Loyalty Solutions Partner">
+   <meta name="twitter:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta name="twitter:image" content="https://www.draco.com/assets/og-image.jpg">
+
+   <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
+   <link rel="stylesheet" href="template/assets/css/main.css">
+   <link rel="stylesheet" href="assets/site.css">
+
+   <style>
+      /* ---- home : scroll-scrubbed Earth hero (on-dark) ---- */
+      body{overflow-x:hidden;}
+      .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
+
+      .stage{position:relative;height:600vh;}                 /* scroll distance the animation spans */
+      .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#000;}
+      /* top scrim so the nav stays legible over the bright planet */
+      .sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:3;pointer-events:none;
+         background:linear-gradient(to bottom,rgba(3,4,6,.75),transparent);}
+
+      canvas#earth{position:absolute;inset:0;z-index:1;display:block;}
+      .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
+         background:radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
+
+      .overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;padding:0 var(--d-pad);pointer-events:none;}
+      .hero-copy{max-width:52ch;will-change:opacity,transform;pointer-events:auto;}
+      .hero-copy .d-eyebrow{margin-bottom:22px;}
+      .hero-copy h1{font-size:clamp(2.4rem,6.4vw,6rem);}
+      .hero-copy .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px;}
+      .hero-copy .lead{max-width:44ch;margin:24px 0 0;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
+      .hero-copy .actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 26px;margin-top:32px;}
+
+      /* closing panel — fades in near the end of the scroll */
+      .hero-end{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;align-items:center;
+         text-align:center;padding:0 var(--d-pad);opacity:0;pointer-events:none;}
+      .hero-end .d-eyebrow{margin-bottom:22px;}
+      .hero-end h2{font-size:clamp(2rem,5.5vw,4.4rem);margin:0 0 30px;}
+
+      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;}
+      .scroll-hint i{animation:draco-pulse 2s ease-in-out infinite;}
+      @keyframes draco-pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+      /* temporary design-compare toggle (bottom-left) — remove once a design is chosen */
+      .design-toggle{position:fixed;left:22px;bottom:22px;z-index:45;display:flex;gap:5px;align-items:center;
+         background:rgba(12,15,20,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--d-line-2);border-radius:100px;padding:5px 5px 5px 14px;}
+      .design-toggle span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-dim);margin-right:4px;}
+      .design-toggle a{font-size:12px;color:var(--d-muted);padding:7px 14px;border-radius:100px;transition:.2s;}
+      .design-toggle a.on{background:var(--d-fg);color:var(--d-bg);}
+      @media (max-width:600px){.design-toggle{left:12px;bottom:80px;}}
+   </style>
+
+   <!-- Structured data (SEO / AEO / GEO) -->
+   <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@graph": [
+       {
+         "@type": "Organization",
+         "@id": "https://www.draco.com/#organization",
+         "name": "Draco",
+         "url": "https://www.draco.com/",
+         "logo": { "@type": "ImageObject", "url": "https://www.draco.com/assets/og-image.jpg", "width": 1200, "height": 630 },
+         "image": "https://www.draco.com/assets/og-image.jpg",
+         "description": "Draco is an enterprise loyalty solutions partner that designs and delivers loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that improve customer retention, strengthen brand loyalty and create long-term business value.",
+         "slogan": "Creating meaningful connections that inspire loyalty",
+         "email": "rajeshrishi@draco.com",
+         "telephone": "+971581684327",
+         "areaServed": "Worldwide",
+         "knowsAbout": ["Customer loyalty programs", "Customer engagement", "Rewards and recognition", "Membership programs", "Customer retention", "Referral and advocacy", "Loyalty consulting"],
+         "contactPoint": {
+           "@type": "ContactPoint",
+           "telephone": "+971581684327",
+           "email": "rajeshrishi@draco.com",
+           "contactType": "sales",
+           "availableLanguage": ["English"]
+         },
+         "makesOffer": [
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Enterprise Loyalty Programs", "description": "Full-lifecycle loyalty programs engineered for scale, from strategy through launch and optimisation." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Customer Engagement Strategies", "description": "Data-informed engagement models that turn passive customers into active, repeat advocates." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Membership & Privilege Programs", "description": "Tiered memberships and privilege schemes that recognise and reward valuable customers." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rewards & Recognition Solutions", "description": "Reward ecosystems that make every interaction feel earned and worthwhile." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Referral & Advocacy Programs", "description": "Programs that turn satisfied customers into a measurable growth channel." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Campaign Management", "description": "End-to-end campaign design and execution aligned to business objectives." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Performance Insights", "description": "Analytics and reporting that connect loyalty activity to business outcomes." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Loyalty Consulting", "description": "Strategic guidance to build the right loyalty model from the ground up." } }
+         ]
+       },
+       {
+         "@type": "WebSite",
+         "@id": "https://www.draco.com/#website",
+         "url": "https://www.draco.com/",
+         "name": "Draco",
+         "description": "Enterprise loyalty solutions partner. Loyalty ecosystems that turn customer engagement into lasting business value.",
+         "publisher": { "@id": "https://www.draco.com/#organization" },
+         "inLanguage": "en"
+       },
+       {
+         "@type": "WebPage",
+         "@id": "https://www.draco.com/#webpage",
+         "url": "https://www.draco.com/",
+         "name": "Draco — Enterprise Loyalty Solutions Partner",
+         "isPartOf": { "@id": "https://www.draco.com/#website" },
+         "about": { "@id": "https://www.draco.com/#organization" },
+         "primaryImageOfPage": "https://www.draco.com/assets/og-image.jpg",
+         "description": "Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.",
+         "inLanguage": "en"
+       }
+     ]
+   }
+   </script>
 </head>
-<body class="home-page">
 
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="site-nav__inner">
-      <a href="index.html" class="site-nav__logo">
-        <img src="assets/logo/logo.jpg" alt="Draco">
-        <span class="site-nav__logo-text">DRACO</span>
-      </a>
-      <button class="site-nav__toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <div class="site-nav__links">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+<body class="draco-home">
+   <!-- header -->
+   <header class="draco-header">
+      <a class="draco-logo" href="index.html" aria-label="Draco home"><img src="assets/logo/logo-white.png" alt="Draco"></a>
+      <nav class="draco-nav" aria-label="Primary">
+         <a href="index.html" aria-current="page">Home</a>
+         <a href="about.html">About</a>
+         <a href="contact.html">Contact</a>
+      </nav>
+      <a class="draco-cta" href="contact.html">Get in touch <i class="fa-regular fa-arrow-right"></i></a>
+      <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+   </header>
+
+   <!-- scroll-scrubbed hero -->
+   <main class="stage" id="main">
+      <div class="sticky">
+         <canvas id="earth" data-frames="240" data-path="assets/earth-frames/dark/" data-ext="jpg" aria-hidden="true"></canvas>
+         <div class="grade" aria-hidden="true"></div>
+
+         <!-- opening copy (fades out on scroll) -->
+         <div class="overlay">
+            <div class="hero-copy">
+               <span class="d-eyebrow">Enterprise Loyalty Partner</span>
+               <h1 class="d-display">Enterprise<br>Loyalty,<span class="note">For the world's most customer-obsessed brands.</span><span class="accent">Engineered.</span></h1>
+               <p class="lead">Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.</p>
+               <div class="actions">
+                  <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
+                  <a class="draco-link" href="about.html">Why Draco <i class="fa-regular fa-arrow-right"></i></a>
+               </div>
+            </div>
+         </div>
+
+         <!-- closing panel (fades in at the end) -->
+         <div class="hero-end">
+            <span class="d-eyebrow">Creating meaningful connections that inspire loyalty</span>
+            <h2 class="d-display">Let's build loyalty<br>worth <span class="accent">keeping.</span></h2>
+            <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
+         </div>
+
+         <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
       </div>
-    </div>
-  </nav>
+   </main>
 
-  <div class="scroll-progress" aria-hidden="true"></div>
+   <nav class="design-toggle" aria-label="Compare designs">
+      <span>Design</span>
+      <a href="index.html" class="on">Scroll</a>
+      <a href="index-loop.html">Loop</a>
+   </nav>
 
-  <section class="hero" aria-label="Hero">
-    <div class="hero__background"></div>
-    <div class="hero__overlay"></div>
+   <!-- mobile menu -->
+   <div class="draco-mobile" id="dracoMobile">
+      <button class="close" id="dracoClose" aria-label="Close menu"><i class="fa-regular fa-xmark"></i></button>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+   </div>
 
-    <div class="hero__content">
-      <div class="hero__panel is-active" data-panel="0">
-        <span class="hero__eyebrow">Enterprise Loyalty Solutions Partner</span>
-        <h1 class="hero__title">Creating Meaningful Connections That Inspire Loyalty</h1>
-        <p class="hero__subtitle">Draco helps businesses build stronger, more meaningful relationships with their customers through intelligent loyalty ecosystems.</p>
-      </div>
-
-      <div class="hero__panel" data-panel="1">
-        <span class="hero__eyebrow">Why Draco</span>
-        <h2 class="hero__title">Retention Over Acquisition</h2>
-        <p class="hero__subtitle">Customer acquisition is becoming increasingly expensive. Draco helps organizations create loyalty ecosystems that encourage long-term relationships instead of one-time transactions.</p>
-      </div>
-
-      <div class="hero__panel" data-panel="2">
-        <span class="hero__eyebrow">What We Do</span>
-        <h2 class="hero__title">Loyalty Ecosystems That Drive Growth</h2>
-        <p class="hero__subtitle">We design and deliver customer loyalty programs, rewards initiatives, membership experiences, engagement campaigns, and retention strategies tailored to your goals.</p>
-      </div>
-
-      <div class="hero__panel" data-panel="3">
-        <span class="hero__eyebrow">Our Capabilities</span>
-        <h2 class="hero__title">End-to-End Loyalty Solutions</h2>
-        <div class="hero__capabilities">
-          <div class="hero__cap-item">Enterprise Loyalty Programs</div>
-          <div class="hero__cap-item">Customer Engagement</div>
-          <div class="hero__cap-item">Membership &amp; Privileges</div>
-          <div class="hero__cap-item">Rewards &amp; Recognition</div>
-          <div class="hero__cap-item">Referral &amp; Advocacy</div>
-          <div class="hero__cap-item">Loyalty Consulting</div>
-        </div>
-      </div>
-
-      <div class="hero__panel" data-panel="4">
-        <span class="hero__eyebrow">Get Started</span>
-        <h2 class="hero__title">Build Lasting Loyalty</h2>
-        <p class="hero__subtitle">Partner with Draco to create engagement-driven experiences that strengthen trust and deliver sustainable business growth.</p>
-        <div class="hero__cta-group">
-          <a href="about.html" class="hero__btn hero__btn--primary">Learn About Us</a>
-          <a href="contact.html" class="hero__btn hero__btn--outline">Get in Touch</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="scroll-spacer" aria-hidden="true"></div>
-
-  <footer class="site-footer" style="position:relative;z-index:2;">
-    <div class="site-footer__inner">
-      <div class="site-footer__brand">
-        <p class="site-footer__brand-name">DRACO</p>
-        <p class="site-footer__tagline">Creating Meaningful Connections That Inspire Loyalty.</p>
-        <p class="site-footer__meta">&copy; 2026 Draco &middot; A Lumivox Ads Company</p>
-      </div>
-      <div class="site-footer__social">
-        <a href="#" data-social="instagram" aria-label="Instagram">
-          <img src="assets/icons/instagram.svg" alt="">
-        </a>
-        <a href="#" data-social="linkedin" aria-label="LinkedIn">
-          <img src="assets/icons/linkedin.svg" alt="">
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <div class="scroll-indicator" aria-hidden="true">
-    <span>Scroll</span>
-    <div class="scroll-indicator__line"></div>
-  </div>
-
-  <a href="#" class="whatsapp-float" aria-label="Chat on WhatsApp">
-    <img src="assets/icons/whatsapp.svg" alt="">
-  </a>
-
-  <script src="js/main.js"></script>
-  <script src="js/scroll-hero.js"></script>
+   <script src="assets/site.js"></script>
+   <script src="assets/earth-scroll.js"></script>
 </body>
 </html>

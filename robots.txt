@@ -1,0 +1,29 @@
+# Draco — robots.txt
+# NOTE: replace www.draco.com with the real production domain.
+
+User-agent: *
+Allow: /
+
+# Search + AI / answer engines are explicitly welcome (good for AEO/GEO):
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://www.draco.com/sitemap.xml
