@@ -17,6 +17,7 @@
    var EXT = canvas.dataset.ext;
    var stage = document.querySelector('.stage');
    var heroCopy = document.querySelector('.hero-copy');
+   var heroQuote = document.querySelector('.hero-quote');
    var heroEnd = document.querySelector('.hero-end');
    var scrollHint = document.querySelector('.scroll-hint');
 
@@ -62,6 +63,10 @@
          heroCopy.style.opacity = String(o);
          heroCopy.style.transform = 'translateY(' + (-progress * 70) + 'px)';
          heroCopy.style.pointerEvents = o < 0.05 ? 'none' : 'auto';
+         if (heroQuote) {
+            heroQuote.style.opacity = String(o);
+            heroQuote.style.transform = 'translateY(' + (-progress * 40) + 'px)';
+         }
       }
       if (scrollHint) scrollHint.style.opacity = String(clamp(1 - progress / 0.08, 0, 1));
       if (heroEnd) {

@@ -11,11 +11,10 @@
    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
 })();
 
-/* Floating WhatsApp button — appears on every page that loads this script.
-   TODO: replace the number with Draco's real WhatsApp business number (digits only, incl. country code). */
+/* Floating WhatsApp button — appears on every page that loads this script. */
 (function () {
    if (document.querySelector('.wa-float')) return;
-   var WA_NUMBER = '971581684327'; // Draco — Rajesh Rishi, +971 58 168 4327
+   var WA_NUMBER = '971504501195'; // Draco — Rajesh Rishi, +971 50 450 1195
    var a = document.createElement('a');
    a.className = 'wa-float';
    a.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent("Hi Draco, I'd like to talk about a loyalty program.");

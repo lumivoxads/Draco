@@ -10,7 +10,7 @@
    <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
 
    <!-- SEO: design variant of the homepage — not indexed; canonical points to the real home -->
-   <link rel="canonical" href="https://www.draco.com/">
+   <link rel="canonical" href="https://www.draco.ae/">
    <meta name="robots" content="noindex,follow">
    <meta name="theme-color" content="#06070a">
 
@@ -26,17 +26,23 @@
       canvas#earth{position:absolute;inset:0;z-index:0;display:block;}
       .grade{position:absolute;inset:0;z-index:0;pointer-events:none;background:
          radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
-      /* left scrim so the copy stays readable over the planet */
+      /* right scrim — Earth sits left; copy lives on the clear right side */
       .scrim{position:absolute;inset:0;z-index:0;pointer-events:none;background:
-         linear-gradient(90deg, rgba(3,4,6,.82) 0%, rgba(3,4,6,.45) 34%, transparent 62%),
+         linear-gradient(270deg, rgba(3,4,6,.82) 0%, rgba(3,4,6,.45) 34%, transparent 62%),
          linear-gradient(to bottom, rgba(3,4,6,.6), transparent 22%);}
 
       .draco-header{position:relative;z-index:5;}
-      .draco-hero{position:relative;z-index:3;flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 var(--d-pad) 40px;}
+      .draco-hero{position:relative;z-index:3;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding:0 var(--d-pad) 40px;padding-left:max(var(--d-pad),52%);}
+      .draco-hero .d-eyebrow{flex-direction:row-reverse;}
       .draco-title{font-size:clamp(2.4rem,6.6vw,6rem);}
-      .draco-title .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px;}
-      .draco-lead{max-width:44ch;margin:24px 0 0;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
-      .draco-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 26px;margin-top:32px;}
+      .draco-title .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px auto;}
+      .draco-lead{max-width:44ch;margin:24px 0 0 auto;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
+      .draco-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:16px 26px;margin-top:32px;}
+
+      /* pull-quote in the lower-left space vacated by the right-shifted copy */
+      .hero-quote{position:absolute;left:var(--d-pad);bottom:28px;max-width:min(38ch,42%);margin:0;padding:0;border:0;text-align:left;}
+      .hero-quote p{margin:0;font-family:var(--d-ff-body);font-style:italic;font-size:clamp(.92rem,1.15vw,1.05rem);line-height:1.55;color:var(--d-muted);}
+      .hero-quote cite{display:block;margin-top:10px;font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-accent);}
 
       .draco-foot{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:16px;
          padding:20px var(--d-pad);border-top:1px solid var(--d-line);font-size:12px;letter-spacing:.05em;color:var(--d-muted);}
@@ -55,6 +61,14 @@
       @media (max-width:600px){
          body.draco-home{overflow:auto;}
          .draco-shell{height:auto;min-height:100svh;}
+         .scrim{background:
+            linear-gradient(to top, rgba(3,4,6,.72) 0%, transparent 42%),
+            linear-gradient(to bottom, rgba(3,4,6,.55), transparent 28%);}
+         .draco-hero{align-items:flex-start;text-align:left;padding:0 var(--d-pad) 24px;}
+         .draco-hero .d-eyebrow{flex-direction:row;}
+         .draco-title .note,.draco-lead{margin-left:0;margin-right:0;}
+         .draco-actions{justify-content:flex-start;}
+         .hero-quote{position:static;max-width:36ch;margin-top:36px;}
          .draco-foot{flex-direction:column;align-items:flex-start;gap:10px;}
          .design-toggle{left:12px;bottom:80px;}
       }
@@ -93,14 +107,17 @@
             <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
             <a class="draco-link" href="about.html">Why Draco <i class="fa-regular fa-arrow-right"></i></a>
          </div>
+         <blockquote class="hero-quote draco-anim d5">
+            <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
+            <cite>— Rumi</cite>
+         </blockquote>
       </main>
 
       <footer class="draco-foot draco-anim d5">
          <span class="essence">Creating meaningful connections that inspire loyalty</span>
          <span class="socials">
+            <!-- TODO: real LinkedIn profile URL from client -->
             <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://wa.me/971581684327" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
          </span>
       </footer>
    </div>

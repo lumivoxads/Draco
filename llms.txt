@@ -21,12 +21,10 @@ Retail, Hospitality, Restaurants & Cafés, Fuel & Energy, Healthcare, Automotive
 Customer acquisition is increasingly expensive, which makes retention more valuable than ever. Draco helps organisations create loyalty ecosystems that encourage long-term relationships instead of one-time transactions, with every engagement aligned to measurable outcomes.
 
 ## Pages
-- [Home](https://www.draco.com/): overview of Draco's enterprise loyalty offering.
-- [About](https://www.draco.com/about.html): who Draco is, vision, mission, capabilities, core values, industries, and FAQ.
-- [Contact](https://www.draco.com/contact.html): how to get in touch and start a loyalty program.
+- [Home](https://www.draco.ae/): overview of Draco's enterprise loyalty offering.
+- [About](https://www.draco.ae/about.html): who Draco is, vision, mission, capabilities, core values, industries, and FAQ.
+- [Contact](https://www.draco.ae/contact.html): how to get in touch and start a loyalty program.
 
 ## Contact
-- Email: rajeshrishi@draco.com
-- Phone / WhatsApp: +971 58 168 4327
-
-<!-- NOTE: replace www.draco.com with the real production domain. -->
+- Email: Rajesh.Rishi@Draco.ae
+- WhatsApp: +971 50 450 1195

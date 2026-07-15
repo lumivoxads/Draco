@@ -1,5 +1,4 @@
 # Draco — robots.txt
-# NOTE: replace www.draco.com with the real production domain.
 
 User-agent: *
 Allow: /
@@ -26,4 +25,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://www.draco.com/sitemap.xml
+Sitemap: https://www.draco.ae/sitemap.xml

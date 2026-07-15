@@ -9,8 +9,8 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
 
-   <!-- SEO — replace www.draco.com with the real production domain -->
-   <link rel="canonical" href="https://www.draco.com/">
+   <!-- SEO -->
+   <link rel="canonical" href="https://www.draco.ae/">
    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
    <meta name="author" content="Draco">
    <meta name="theme-color" content="#06070a">
@@ -19,8 +19,8 @@
    <meta property="og:site_name" content="Draco">
    <meta property="og:title" content="Draco — Enterprise Loyalty Solutions Partner">
    <meta property="og:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
-   <meta property="og:url" content="https://www.draco.com/">
-   <meta property="og:image" content="https://www.draco.com/assets/og-image.jpg">
+   <meta property="og:url" content="https://www.draco.ae/">
+   <meta property="og:image" content="https://www.draco.ae/assets/og-image.jpg">
    <meta property="og:image:width" content="1200">
    <meta property="og:image:height" content="630">
    <meta property="og:image:alt" content="Draco — Enterprise Loyalty, Engineered.">
@@ -28,7 +28,7 @@
    <meta name="twitter:card" content="summary_large_image">
    <meta name="twitter:title" content="Draco — Enterprise Loyalty Solutions Partner">
    <meta name="twitter:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
-   <meta name="twitter:image" content="https://www.draco.com/assets/og-image.jpg">
+   <meta name="twitter:image" content="https://www.draco.ae/assets/og-image.jpg">
 
    <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
    <link rel="stylesheet" href="template/assets/css/main.css">
@@ -36,7 +36,10 @@
 
    <style>
       /* ---- home : scroll-scrubbed Earth hero (on-dark) ---- */
-      body{overflow-x:hidden;}
+      /* overflow-x guard lives on html, not body: body{overflow-x:hidden} breaks
+         position:sticky on mobile Safari/Chrome (dynamic toolbar resize conflicts
+         with an overflow-clipped sticky containing block) */
+      html{overflow-x:hidden;}
       .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
 
       .stage{position:relative;height:600vh;}                 /* scroll distance the animation spans */
@@ -48,14 +51,22 @@
       canvas#earth{position:absolute;inset:0;z-index:1;display:block;}
       .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
          background:radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
+      /* right scrim — Earth sits left; copy lives on the clear right side */
+      .scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
+         linear-gradient(270deg, rgba(3,4,6,.82) 0%, rgba(3,4,6,.45) 34%, transparent 62%);}
 
-      .overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;padding:0 var(--d-pad);pointer-events:none;}
+      .overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding:0 var(--d-pad);padding-left:max(var(--d-pad),52%);pointer-events:none;}
       .hero-copy{max-width:52ch;will-change:opacity,transform;pointer-events:auto;}
-      .hero-copy .d-eyebrow{margin-bottom:22px;}
+      .hero-copy .d-eyebrow{margin-bottom:22px;flex-direction:row-reverse;}
       .hero-copy h1{font-size:clamp(2.4rem,6.4vw,6rem);}
-      .hero-copy .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px;}
-      .hero-copy .lead{max-width:44ch;margin:24px 0 0;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
-      .hero-copy .actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px 26px;margin-top:32px;}
+      .hero-copy .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px auto;}
+      .hero-copy .lead{max-width:44ch;margin:24px 0 0 auto;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
+      .hero-copy .actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:16px 26px;margin-top:32px;}
+
+      /* pull-quote in the lower-left space vacated by the right-shifted copy */
+      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;max-width:min(38ch,42%);margin:0;padding:0;border:0;text-align:left;will-change:opacity,transform;pointer-events:none;}
+      .hero-quote p{margin:0;font-family:var(--d-ff-body);font-style:italic;font-size:clamp(.92rem,1.15vw,1.05rem);line-height:1.55;color:var(--d-muted);}
+      .hero-quote cite{display:block;margin-top:10px;font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-accent);}
 
       /* closing panel — fades in near the end of the scroll */
       .hero-end{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;align-items:center;
@@ -73,7 +84,15 @@
       .design-toggle span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-dim);margin-right:4px;}
       .design-toggle a{font-size:12px;color:var(--d-muted);padding:7px 14px;border-radius:100px;transition:.2s;}
       .design-toggle a.on{background:var(--d-fg);color:var(--d-bg);}
-      @media (max-width:600px){.design-toggle{left:12px;bottom:80px;}}
+      @media (max-width:600px){
+         .scrim{background:linear-gradient(to top, rgba(3,4,6,.72) 0%, transparent 42%),linear-gradient(to bottom, rgba(3,4,6,.55), transparent 28%);}
+         .overlay{align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
+         .hero-copy .d-eyebrow{flex-direction:row;}
+         .hero-copy .note,.hero-copy .lead{margin-left:0;margin-right:0;}
+         .hero-copy .actions{justify-content:flex-start;}
+         .hero-quote{left:var(--d-pad);right:var(--d-pad);bottom:64px;max-width:none;}
+         .design-toggle{left:12px;bottom:80px;}
+      }
    </style>
 
    <!-- Structured data (SEO / AEO / GEO) -->
@@ -83,21 +102,21 @@
      "@graph": [
        {
          "@type": "Organization",
-         "@id": "https://www.draco.com/#organization",
+         "@id": "https://www.draco.ae/#organization",
          "name": "Draco",
-         "url": "https://www.draco.com/",
-         "logo": { "@type": "ImageObject", "url": "https://www.draco.com/assets/og-image.jpg", "width": 1200, "height": 630 },
-         "image": "https://www.draco.com/assets/og-image.jpg",
+         "url": "https://www.draco.ae/",
+         "logo": { "@type": "ImageObject", "url": "https://www.draco.ae/assets/og-image.jpg", "width": 1200, "height": 630 },
+         "image": "https://www.draco.ae/assets/og-image.jpg",
          "description": "Draco is an enterprise loyalty solutions partner that designs and delivers loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that improve customer retention, strengthen brand loyalty and create long-term business value.",
          "slogan": "Creating meaningful connections that inspire loyalty",
-         "email": "rajeshrishi@draco.com",
-         "telephone": "+971581684327",
+         "email": "Rajesh.Rishi@Draco.ae",
+         "telephone": "+971504501195",
          "areaServed": "Worldwide",
          "knowsAbout": ["Customer loyalty programs", "Customer engagement", "Rewards and recognition", "Membership programs", "Customer retention", "Referral and advocacy", "Loyalty consulting"],
          "contactPoint": {
            "@type": "ContactPoint",
-           "telephone": "+971581684327",
-           "email": "rajeshrishi@draco.com",
+           "telephone": "+971504501195",
+           "email": "Rajesh.Rishi@Draco.ae",
            "contactType": "sales",
            "availableLanguage": ["English"]
          },
@@ -114,21 +133,21 @@
        },
        {
          "@type": "WebSite",
-         "@id": "https://www.draco.com/#website",
-         "url": "https://www.draco.com/",
+         "@id": "https://www.draco.ae/#website",
+         "url": "https://www.draco.ae/",
          "name": "Draco",
          "description": "Enterprise loyalty solutions partner. Loyalty ecosystems that turn customer engagement into lasting business value.",
-         "publisher": { "@id": "https://www.draco.com/#organization" },
+         "publisher": { "@id": "https://www.draco.ae/#organization" },
          "inLanguage": "en"
        },
        {
          "@type": "WebPage",
-         "@id": "https://www.draco.com/#webpage",
-         "url": "https://www.draco.com/",
+         "@id": "https://www.draco.ae/#webpage",
+         "url": "https://www.draco.ae/",
          "name": "Draco — Enterprise Loyalty Solutions Partner",
-         "isPartOf": { "@id": "https://www.draco.com/#website" },
-         "about": { "@id": "https://www.draco.com/#organization" },
-         "primaryImageOfPage": "https://www.draco.com/assets/og-image.jpg",
+         "isPartOf": { "@id": "https://www.draco.ae/#website" },
+         "about": { "@id": "https://www.draco.ae/#organization" },
+         "primaryImageOfPage": "https://www.draco.ae/assets/og-image.jpg",
          "description": "Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.",
          "inLanguage": "en"
        }
@@ -155,6 +174,7 @@
       <div class="sticky">
          <canvas id="earth" data-frames="240" data-path="assets/earth-frames/dark/" data-ext="jpg" aria-hidden="true"></canvas>
          <div class="grade" aria-hidden="true"></div>
+         <div class="scrim" aria-hidden="true"></div>
 
          <!-- opening copy (fades out on scroll) -->
          <div class="overlay">
@@ -167,6 +187,10 @@
                   <a class="draco-link" href="about.html">Why Draco <i class="fa-regular fa-arrow-right"></i></a>
                </div>
             </div>
+            <blockquote class="hero-quote">
+               <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
+               <cite>— Rumi</cite>
+            </blockquote>
          </div>
 
          <!-- closing panel (fades in at the end) -->
