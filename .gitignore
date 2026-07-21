@@ -1,3 +1,15 @@
 .DS_Store
+
+# Agent scratch — screenshot tooling and captures, not part of the static site
+node_modules/
+package.json
+package-lock.json
+screenshot.js
+generate_lab.py
+.playwright-mcp/
+
+# Source video for the Earth frame sequence — frames are committed, sources are not
+assets/*.mp4
+
 .claude/settings.local.json
 assets/earth-frames/dark-prev-earth/

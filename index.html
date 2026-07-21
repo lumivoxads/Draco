@@ -42,13 +42,15 @@
       html{overflow-x:hidden;}
       .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
 
-      .stage{position:relative;height:600vh;}                 /* scroll distance the animation spans */
+      .stage{position:relative;height:1000vh;}                 /* scroll distance the animation spans */
       .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#000;}
       /* top scrim so the nav stays legible over the bright planet */
       .sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:3;pointer-events:none;
          background:linear-gradient(to bottom,rgba(3,4,6,.75),transparent);}
 
       canvas#earth{position:absolute;inset:0;z-index:1;display:block;}
+      canvas#cobe-canvas{position:absolute;inset:0;z-index:2;display:block;opacity:0;pointer-events:none;transition:opacity 0.6s ease;}
+      canvas#connector-canvas{position:absolute;inset:0;z-index:3;pointer-events:none;}
       .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
          background:radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
       /* right scrim — Earth sits left; copy lives on the clear right side */
@@ -61,37 +63,98 @@
       .hero-copy h1{font-size:clamp(2.4rem,6.4vw,6rem);}
       .hero-copy .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px auto;}
       .hero-copy .lead{max-width:44ch;margin:24px 0 0 auto;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
-      .hero-copy .actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:16px 26px;margin-top:32px;}
 
       /* pull-quote in the lower-left space vacated by the right-shifted copy */
-      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;max-width:min(38ch,42%);margin:0;padding:0;border:0;text-align:left;will-change:opacity,transform;pointer-events:none;}
+      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;max-width:min(42ch,42%);margin:0;padding:0;border:0;text-align:left;will-change:opacity,transform;pointer-events:none;}
       .hero-quote p{margin:0;font-family:var(--d-ff-body);font-style:italic;font-size:clamp(.92rem,1.15vw,1.05rem);line-height:1.55;color:var(--d-muted);}
       .hero-quote cite{display:block;margin-top:10px;font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-accent);}
 
-      /* closing panel — fades in near the end of the scroll */
-      .hero-end{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;align-items:center;
-         text-align:center;padding:0 var(--d-pad);opacity:0;pointer-events:none;}
-      .hero-end .d-eyebrow{margin-bottom:22px;}
-      .hero-end h2{font-size:clamp(2rem,5.5vw,4.4rem);margin:0 0 30px;}
-
-      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;}
+      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;transition:opacity .25s;}
       .scroll-hint i{animation:draco-pulse 2s ease-in-out infinite;}
       @keyframes draco-pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-      /* temporary design-compare toggle (bottom-left) — remove once a design is chosen */
-      .design-toggle{position:fixed;left:22px;bottom:22px;z-index:45;display:flex;gap:5px;align-items:center;
-         background:rgba(12,15,20,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--d-line-2);border-radius:100px;padding:5px 5px 5px 14px;}
-      .design-toggle span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-dim);margin-right:4px;}
-      .design-toggle a{font-size:12px;color:var(--d-muted);padding:7px 14px;border-radius:100px;transition:.2s;}
-      .design-toggle a.on{background:var(--d-fg);color:var(--d-bg);}
+      .step-1, .step-2, .step-3 { opacity: 0; pointer-events: none; }
+      @media (prefers-reduced-motion:reduce){
+         .stage{height:auto!important;}
+         .sticky{position:relative!important;height:auto!important;overflow:visible!important;background:#000;}
+         canvas#earth, .grade, .scrim { position: fixed; inset: 0; z-index: 0; }
+         canvas#earth { z-index: -1; }
+         .overlay{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;pointer-events:auto!important;min-height:100vh; z-index: 4; justify-content: center;}
+         .scroll-hint{display:none;}
+      }
+
+
+      /* Glass Panel for Verticals Globe */
+      .glass-panel {
+         width: 100%;
+         max-width: 420px;
+         background: rgba(12, 15, 20, 0.6);
+         -webkit-backdrop-filter: blur(12px);
+         backdrop-filter: blur(12px);
+         border: 1px solid var(--d-line);
+         border-radius: 12px;
+         padding: 32px;
+         pointer-events: auto;
+         transition: opacity 0.4s ease;
+      }
+      .panel-header {
+         border-bottom: 1px solid var(--d-accent);
+         padding-bottom: 16px;
+         margin-bottom: 24px;
+      }
+      .panel-header h2 {
+         margin: 0;
+         font-size: 2rem;
+         color: var(--d-accent);
+      }
+      .verticals-chips {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 10px;
+      }
+      .v-chip {
+         font-family: var(--d-ff-body);
+         font-size: 0.9rem;
+         padding: 8px 16px;
+         border: 1px solid rgba(201, 169, 106, 0.5); /* gold hairline */
+         border-radius: 100px;
+         color: var(--d-fg);
+         background: transparent;
+         opacity: 0;
+         transform: translateY(10px);
+         transition: opacity 0.4s ease, transform 0.4s ease;
+      }
+      .v-chip.show {
+         opacity: 1;
+         transform: translateY(0);
+      }
+
+      /* Stack multiple panels in fallback */
+      .fallback-mode .step-3 {
+         display: flex;
+         flex-direction: column;
+         gap: 24px;
+         align-items: flex-end;
+         pointer-events: auto;
+         opacity: 1 !important;
+         transform: none !important;
+         padding-top: 100px; /* space from top */
+         padding-bottom: 100px; /* space from bottom */
+      }
+      .fallback-mode .v-chip {
+         opacity: 1;
+         transform: none;
+         transition: none;
+      }
+
       @media (max-width:600px){
          .scrim{background:linear-gradient(to top, rgba(3,4,6,.72) 0%, transparent 42%),linear-gradient(to bottom, rgba(3,4,6,.55), transparent 28%);}
          .overlay{align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
          .hero-copy .d-eyebrow{flex-direction:row;}
          .hero-copy .note,.hero-copy .lead{margin-left:0;margin-right:0;}
-         .hero-copy .actions{justify-content:flex-start;}
-         .hero-quote{left:var(--d-pad);right:var(--d-pad);bottom:64px;max-width:none;}
-         .design-toggle{left:12px;bottom:80px;}
+         .glass-panel { max-width: none; }
+         .d-section#verticals { align-items: flex-end; padding-bottom: 24px; }
+         canvas#connector-canvas { display: none !important; }
       }
    </style>
 
@@ -165,50 +228,62 @@
          <a href="about.html">About</a>
          <a href="contact.html">Contact</a>
       </nav>
-      <a class="draco-cta" href="contact.html">Get in touch <i class="fa-regular fa-arrow-right"></i></a>
+
       <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
    </header>
 
    <!-- scroll-scrubbed hero -->
    <main class="stage" id="main">
       <div class="sticky">
-         <canvas id="earth" data-frames="240" data-path="assets/earth-frames/dark/" data-ext="jpg" aria-hidden="true"></canvas>
+         <canvas id="earth" data-frames="240" data-path="assets/earth-frames/dark/" data-ext="jpg" data-fps="24" aria-hidden="true"></canvas>
+         <canvas id="cobe-canvas" aria-hidden="true"></canvas>
+         <canvas id="connector-canvas" aria-hidden="true"></canvas>
          <div class="grade" aria-hidden="true"></div>
          <div class="scrim" aria-hidden="true"></div>
 
-         <!-- opening copy (fades out on scroll) -->
-         <div class="overlay">
+         <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
+
+         <!-- Step 1: Headline -->
+         <div class="overlay step-1">
             <div class="hero-copy">
                <span class="d-eyebrow">Enterprise Loyalty Partner</span>
                <h1 class="d-display">Enterprise<br>Loyalty,<span class="note">For the world's most customer-obsessed brands.</span><span class="accent">Engineered.</span></h1>
                <p class="lead">Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.</p>
-               <div class="actions">
-                  <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
-                  <a class="draco-link" href="about.html">Why Draco <i class="fa-regular fa-arrow-right"></i></a>
-               </div>
             </div>
-            <blockquote class="hero-quote">
-               <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
-               <cite>— Rumi</cite>
-            </blockquote>
          </div>
 
-         <!-- closing panel (fades in at the end) -->
-         <div class="hero-end">
-            <span class="d-eyebrow">Creating meaningful connections that inspire loyalty</span>
-            <h2 class="d-display">Let's build loyalty<br>worth <span class="accent">keeping.</span></h2>
-            <a class="draco-btn" href="contact.html">Start a conversation <i class="fa-regular fa-arrow-right"></i></a>
+         <!-- Step 2: Quote CTA -->
+         <div class="overlay step-2">
+            <div class="hero-quote">
+               <blockquote style="margin: 0; padding: 0; border: 0;">
+                  <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
+                  <cite>— Rumi</cite>
+               </blockquote>
+               <p class="cta-line" style="font-size: clamp(1.15rem, 1.8vw, 1.45rem); color: var(--d-fg); margin: 30px 0 0; line-height: 1.4;">
+                  Connect with us and speak to someone who has not been home for a very long time. <i class="fa-regular fa-arrow-down-right" style="color: var(--d-accent); margin-left: 10px;"></i>
+               </p>
+            </div>
          </div>
 
-         <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
+         <!-- Step 3: Verticals -->
+         <div class="overlay step-3" style="align-items: flex-start; text-align: left; padding: 0; pointer-events: none;">
+            <section class="d-section" id="verticals" style="width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: var(--d-pad);">
+               <div class="glass-panel" id="verticals-panel">
+                  <div class="panel-header">
+                     <h2 class="d-display region-name" id="region-name">Region Name</h2>
+                  </div>
+                  <div class="panel-content">
+                     <div class="verticals-chips" id="verticals-chips">
+                        <!-- Chips will be injected here -->
+                     </div>
+                  </div>
+               </div>
+            </section>
+         </div>
       </div>
    </main>
 
-   <nav class="design-toggle" aria-label="Compare designs">
-      <span>Design</span>
-      <a href="index.html" class="on">Scroll</a>
-      <a href="index-loop.html">Loop</a>
-   </nav>
+
 
    <!-- mobile menu -->
    <div class="draco-mobile" id="dracoMobile">
@@ -220,5 +295,6 @@
 
    <script src="assets/site.js"></script>
    <script src="assets/earth-scroll.js"></script>
+   <script type="module" src="assets/verticals-globe.js"></script>
 </body>
 </html>

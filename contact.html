@@ -112,7 +112,7 @@
          <a href="about.html">About</a>
          <a href="contact.html" aria-current="page">Contact</a>
       </nav>
-      <a class="draco-cta" href="contact.html">Get in touch <i class="fa-regular fa-arrow-right"></i></a>
+
       <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
    </header>
 
@@ -124,8 +124,7 @@
          <span class="d-eyebrow draco-anim d1">Contact</span>
          <h1 class="d-display page-title draco-anim d2">Let's start a<br><span class="accent">conversation.</span></h1>
          <p class="page-lead draco-anim d3">
-            Tell us about your customers and your goals. We'll show you how a Draco loyalty ecosystem
-            can turn everyday engagement into lasting business value.
+            Tell us about you, your customers, your challenges, and your goals. We'll show you how we can turn everyday engagement into lasting business value.
          </p>
       </div>
    </section>
@@ -143,7 +142,7 @@
             <div class="item">
                <h4>WhatsApp</h4>
                <a href="https://wa.me/971504501195" target="_blank" rel="noopener noreferrer">+971 50 450 1195</a>
-               <p class="sub">Message us anytime</p>
+               <p class="sub">Message or call us anytime</p>
             </div>
             <div class="contact-socials">
                <a href="https://www.linkedin.com/in/rajeshrishi" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
@@ -163,23 +162,13 @@
                      <input type="email" id="email" name="email" placeholder="jane@company.com" required>
                   </div>
                </div>
-               <div class="field-row">
-                  <div class="field">
-                     <label for="company">Company</label>
-                     <input type="text" id="company" name="company" placeholder="Company name">
-                  </div>
-                  <div class="field">
-                     <label for="industry">Industry</label>
-                     <input type="text" id="industry" name="industry" placeholder="e.g. Retail, Hospitality">
-                  </div>
-               </div>
                <div class="field">
-                  <label for="message">How can we help?</label>
+                  <label for="message">Tell us about you, your customers, your challenges, and your goals</label>
                   <textarea id="message" name="message" placeholder="Tell us about your loyalty goals…" required></textarea>
                </div>
                <button type="submit" class="draco-btn">Send message <i class="fa-regular fa-arrow-right"></i></button>
-               <p class="form-note">Opens your email app with this message addressed to Rajesh.Rishi@Draco.ae.</p>
-               <div class="form-ok" id="formOk"><i class="fa-regular fa-circle-check"></i> Opening your email app — send the draft to finish.</div>
+               <p class="form-note">Send opens your email app with your message ready to review.</p>
+               <div class="form-ok" id="formOk"><i class="fa-regular fa-circle-check"></i> Email app opened — please send the drafted message.</div>
             </form>
          </div>
       </div>
@@ -234,16 +223,12 @@
 
             var name = (f.name.value || '').trim();
             var email = (f.email.value || '').trim();
-            var company = (f.company.value || '').trim();
-            var industry = (f.industry.value || '').trim();
             var message = (f.message.value || '').trim();
 
             var subject = 'Draco enquiry from ' + (name || email);
             var body = [
                'Name: ' + name,
                'Email: ' + email,
-               'Company: ' + (company || '—'),
-               'Industry: ' + (industry || '—'),
                '',
                'Message:',
                message
