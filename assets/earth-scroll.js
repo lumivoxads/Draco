@@ -65,25 +65,25 @@
    function onScroll() {
       if (isReduced) return;
       var rawScroll = Math.max(0, -stage.getBoundingClientRect().top);
-      var baseScrollable = innerHeight * 5; // Pacing for original 600vh stage
-      var progress = clamp(rawScroll / baseScrollable, 0, 1);
-      
+      var maxScroll = stage.offsetHeight - innerHeight;
+      var progress = maxScroll > 0 ? clamp(rawScroll / maxScroll, 0, 1) : 0;
+
       if (scrollHint) scrollHint.style.opacity = String(clamp(1 - progress / 0.05, 0, 1));
 
-      // Step 1: 0.1 to 0.40 (fade out by 0.45)
+      // Step 1: visible on load, fades out 0.35–0.45
       if (step1) {
-         var p1 = clamp((progress - 0.05) / 0.1, 0, 1);
          var o1 = clamp(1 - (progress - 0.35) / 0.1, 0, 1);
-         var val1 = p1 * o1;
-         step1.style.opacity = String(val1);
-         step1.style.transform = 'translateY(' + ((1 - p1) * 30 - (1 - o1) * 30) + 'px)';
-         step1.style.pointerEvents = val1 > 0.5 ? 'auto' : 'none';
+         step1.style.opacity = String(o1);
+         step1.style.transform = 'translateY(' + ((1 - o1) * 30) + 'px)';
+         step1.style.pointerEvents = o1 > 0.5 ? 'auto' : 'none';
       }
 
       // Step 2: 0.45 to 0.75 (fade out by 0.80)
       if (step2) {
          var p2 = clamp((progress - 0.40) / 0.1, 0, 1);
-         var o2 = clamp(1 - (progress - 0.70) / 0.1, 0, 1);
+         // Clears before step 3 begins at 0.76. Overlapping the two left both
+         // texts ghosted at ~20% over a half-faded overlay, which read as muddy.
+         var o2 = clamp(1 - (progress - 0.66) / 0.08, 0, 1);
          var val2 = p2 * o2;
          step2.style.opacity = String(val2);
          step2.style.transform = 'translateY(' + ((1 - p2) * 30 - (1 - o2) * 30) + 'px)';
@@ -99,7 +99,7 @@
 
       // Step 3: 0.80 to 1.0 (stays)
       if (step3) {
-         var p3 = clamp((progress - 0.75) / 0.15, 0, 1);
+         var p3 = clamp((progress - 0.76) / 0.14, 0, 1);
          step3.style.opacity = String(p3);
          step3.style.transform = 'translateY(' + ((1 - p3) * 30) + 'px)';
          step3.style.pointerEvents = p3 > 0.5 ? 'auto' : 'none';
