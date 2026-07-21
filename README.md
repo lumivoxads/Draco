@@ -8,105 +8,48 @@ Static website for **Draco**, an Enterprise Loyalty Solutions Partner under Lumi
 
 | Page | File | Description |
 |------|------|-------------|
-| Home | `index.html` | Scroll-driven hero with 5 content panels |
+| Home | `index.html` | Scroll-driven hero featuring a 240-frame Earth sequence and vector globe |
 | About | `about.html` | Full brand story and capabilities |
-| Contact | `contact.html` | Team contacts and WhatsApp CTA |
+| Contact | `contact.html` | Team contacts and inquiry paths |
+| Redirect | `index-loop.html` | A `noindex` stub kept alive for an ongoing client review |
 
 ## Quick Start
 
 Open `index.html` in a browser, or serve locally:
 
 ```bash
-python3 -m http.server 8080
-# Visit http://localhost:8080
+python3 -m http.server 8000
+# Visit http://localhost:8000
 ```
 
-No build tools required — deploy as-is to GitHub Pages, Netlify, or any static host.
+There is **no build step**, package manager, or compile step. The site is served entirely as static files.
 
-## Asset Drop-In
+## Architecture & Assets
 
-### Logo
+### The Cunnet-derived Theme
+The site's styling is derived from the "Cunnet" dark-and-gold theme. Shared styles and custom properties (CSS variables for colors, spacing, etc.) live in `assets/site.css`. 
+The visual identity is primarily navy (`#0B1D3A`) and gold (`#C9A227`).
 
-```
-assets/logo/logo.jpg       — primary nav
-assets/logo/logo-alt.jpg   — alternate
-```
+### Scroll Choreography
+The home page features a scroll-driven experience orchestrated by `assets/earth-scroll.js`. It uses a 240-frame Earth sequence located in `assets/earth-frames/dark/`.
 
-If the image fails to load, the nav falls back to the text **DRACO**.
+The scroll journey has three distinct steps:
+1. **Headline:** The introductory hero text.
+2. **Quote CTA:** A bold quote encouraging the user to engage.
+3. **Vector Globe:** The globe rendering and regional data cards.
 
-### Scroll Hero Frames
+The scroll progress thresholds that govern when each step activates or fades are defined in `assets/earth-scroll.js`.
 
-Add frame sequence images to:
+### Vector Globe
+The interactive globe is driven by `assets/verticals-globe.js`. It utilizes vendored dependencies (D3 and TopoJSON) located in `assets/vendor/` (`d3-geo.min.js`, `d3-array.min.js`, `topojson-client.min.js`, and `countries-110m.json`).
 
-```
-assets/frames/frame_0001.webp
-assets/frames/frame_0002.webp
-...
-```
+*Note:* The region data displayed in the globe's glass cards is currently placeholder content awaiting client sign-off.
 
-Then update `FRAME_CONFIG.count` in `js/scroll-hero.js`:
+### Contact Rail
+A floating contact rail allows users to quickly reach out. Its logic is handled in `assets/site.js` and styling in `assets/site.css`.
 
-```javascript
-const FRAME_CONFIG = {
-  path: 'assets/frames/frame_',
-  extension: '.webp',
-  padLength: 4,
-  count: 120  // set to your total frame count
-};
-```
-
-Until frames are added (`count: 0`), the home hero uses a navy gradient background with subtle parallax.
-
-### Social Links
-
-Update URLs in `SITE_CONFIG` at the top of `js/main.js`:
-
-```javascript
-social: {
-  instagram: 'https://instagram.com/your-handle',
-  linkedin: 'https://linkedin.com/company/your-company'
-}
-```
-
-## Configuration
-
-All site-wide settings live in `js/main.js`:
-
-```javascript
-const SITE_CONFIG = {
-  logo: 'assets/logo/logo.jpg',
-  logoAlt: 'assets/logo/logo-alt.jpg',
-  social: { instagram: '#', linkedin: '#' },
-  whatsapp: '971504501195',
-  contacts: [
-    { name: 'Rajesh Rishi', role: 'Primary Contact', phone: '+971504501195', email: 'rajesh.rishi@draco.ae' },
-    { name: 'Akshay Manikantan', role: 'Business Development', phone: '+971506748498', email: 'akshay.manikantan@draco.ae' }
-  ]
-};
-```
-
-## Project Structure
-
-```
-Draco/
-├── index.html
-├── about.html
-├── contact.html
-├── css/
-│   ├── base.css
-│   ├── home.css
-│   └── pages.css
-├── js/
-│   ├── main.js
-│   └── scroll-hero.js
-└── assets/
-    ├── logo/
-    ├── frames/
-    └── icons/
-```
-
-## Design
-
-- **Primary:** `#0B1D3A` (deep navy)
-- **Accent:** `#C9A227` (gold)
-- **Font:** Inter (Google Fonts)
+## Configuration & Contact Info
+Phone numbers, emails, and brand details for the contact elements and footer:
+- **WhatsApp:** +971 50 450 1195
+- **Primary Contact:** Rajesh Rishi (rajesh.rishi@draco.ae)
+- **BD Contact:** Akshay Manikantan (akshay.manikantan@draco.ae)
