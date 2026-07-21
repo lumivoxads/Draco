@@ -20,6 +20,10 @@
    var EARTH_CY_FRAC = 0.4460;
    var EARTH_R_FRAC = 0.1930;
 
+   // d3-geo rotation [λ, φ, γ] that matches frame 120's frozen camera — separate
+   // from cx/cy/r, which only register the disc boundary.
+   var EARTH_BASE_ROTATION = [98, -45, 0];
+
    var stage = document.querySelector('.stage');
    var scrollHint = document.querySelector('.scroll-hint');
    var step1 = document.querySelector('.step-1');
@@ -60,6 +64,7 @@
       pause: false,
       holdFrame: HOLD_FRAME,
       step3Active: false,
+      baseRotation: EARTH_BASE_ROTATION,
       getCoverFit: getCoverFit,
       earthOnScreen: earthOnScreen,
       earthFracsForFrame: earthFracsForFrame,

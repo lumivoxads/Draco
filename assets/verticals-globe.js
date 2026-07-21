@@ -99,6 +99,13 @@
     return [-anchor[0], -anchor[1], 0];
   }
 
+  function getBaseRotation() {
+    if (window.DracoEarth && window.DracoEarth.baseRotation) {
+      return window.DracoEarth.baseRotation.slice();
+    }
+    return [98, -45, 0];
+  }
+
   function shortestDelta(from, to) {
     var diff = to - from;
     while (diff > 180) diff -= 360;
@@ -106,15 +113,10 @@
     return diff;
   }
 
-  function easeRotation() {
-    if (isReduced) return;
-    currentRotation[0] += shortestDelta(currentRotation[0], targetRotation[0]) * 0.08;
-    currentRotation[1] += (targetRotation[1] - currentRotation[1]) * 0.08;
-    currentRotation[2] += (targetRotation[2] - currentRotation[2]) * 0.08;
-    if (!allLit && !regionHoldLocked) currentRotation[0] += 0.04;
+  function syncRotation() {
+    targetRotation = getBaseRotation();
+    if (step3Visible || isReduced) currentRotation = targetRotation.slice();
   }
-
-  var regionHoldLocked = false;
 
   function getEarthLayout() {
     if (window.DracoEarth && window.DracoEarth.earthOnScreen) {
@@ -369,13 +371,11 @@
     var beatIndex = Math.floor(beatFloat);
     var beatFrac = beatFloat - beatIndex;
     var inHold = beatFrac < 0.001 && beatIndex < REGIONS.length;
-    regionHoldLocked = inHold;
 
     if (beatIndex >= REGIONS.length) {
       allLit = true;
       regionWeights = REGIONS.map(function () { return 1; });
       renderPanel(-1);
-      targetRotation = anchorToRotation(REGIONS[REGIONS.length - 1].anchor);
     } else {
       allLit = false;
       if (inHold) {
@@ -387,16 +387,14 @@
           return 0;
         });
       }
-      targetRotation = anchorToRotation(REGIONS[beatIndex].anchor);
       renderPanel(beatIndex);
     }
+
+    syncRotation();
   }
 
   function tick() {
-    if (!isReduced) {
-      pulsePhase += 0.08;
-      easeRotation();
-    }
+    if (!isReduced) pulsePhase += 0.08;
     updateFromScroll();
     drawGlobe();
     if (!isReduced) requestAnimationFrame(tick);
@@ -427,7 +425,7 @@
     document.body.classList.add('fallback-mode', 'reduced-globe-mode');
     allLit = true;
     regionWeights = REGIONS.map(function () { return 1; });
-    currentRotation = anchorToRotation(REGIONS[0].anchor);
+    currentRotation = getBaseRotation();
     targetRotation = currentRotation.slice();
 
     var step3Section = document.querySelector('.step-3 .d-section');
@@ -513,8 +511,8 @@
 
   function initGlobe() {
     resize();
-    targetRotation = anchorToRotation(REGIONS[0].anchor);
-    currentRotation = targetRotation.slice();
+    currentRotation = getBaseRotation();
+    targetRotation = currentRotation.slice();
 
     loadTopology()
       .then(function () {
