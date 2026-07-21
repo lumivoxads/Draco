@@ -99,11 +99,22 @@
     return [-anchor[0], -anchor[1], 0];
   }
 
-  function getBaseRotation() {
-    if (window.DracoEarth && window.DracoEarth.baseRotation) {
-      return window.DracoEarth.baseRotation.slice();
-    }
-    return [98, -45, 0];
+  function lerpAngle(a, b, t) {
+    return a + shortestDelta(a, b) * t;
+  }
+
+  function rotationForBeat(beatFloat) {
+    var last = REGIONS.length - 1;
+    if (beatFloat >= last) return anchorToRotation(REGIONS[last].anchor);
+    var idx = Math.floor(beatFloat);
+    var frac = beatFloat - idx;
+    var from = anchorToRotation(REGIONS[idx].anchor);
+    var to = anchorToRotation(REGIONS[idx + 1].anchor);
+    return [
+      lerpAngle(from[0], to[0], frac),
+      from[1] + (to[1] - from[1]) * frac,
+      from[2] + (to[2] - from[2]) * frac
+    ];
   }
 
   function shortestDelta(from, to) {
@@ -113,9 +124,11 @@
     return diff;
   }
 
-  function syncRotation() {
-    targetRotation = getBaseRotation();
-    if (step3Visible || isReduced) currentRotation = targetRotation.slice();
+  function easeRotation() {
+    if (isReduced) return;
+    currentRotation[0] += shortestDelta(currentRotation[0], targetRotation[0]) * 0.08;
+    currentRotation[1] += (targetRotation[1] - currentRotation[1]) * 0.08;
+    currentRotation[2] += (targetRotation[2] - currentRotation[2]) * 0.08;
   }
 
   function getEarthLayout() {
@@ -376,6 +389,7 @@
       allLit = true;
       regionWeights = REGIONS.map(function () { return 1; });
       renderPanel(-1);
+      targetRotation = anchorToRotation(REGIONS[REGIONS.length - 1].anchor);
     } else {
       allLit = false;
       if (inHold) {
@@ -387,14 +401,16 @@
           return 0;
         });
       }
+      targetRotation = rotationForBeat(beatFloat);
       renderPanel(beatIndex);
     }
-
-    syncRotation();
   }
 
   function tick() {
-    if (!isReduced) pulsePhase += 0.08;
+    if (!isReduced) {
+      pulsePhase += 0.08;
+      easeRotation();
+    }
     updateFromScroll();
     drawGlobe();
     if (!isReduced) requestAnimationFrame(tick);
@@ -425,7 +441,7 @@
     document.body.classList.add('fallback-mode', 'reduced-globe-mode');
     allLit = true;
     regionWeights = REGIONS.map(function () { return 1; });
-    currentRotation = getBaseRotation();
+    currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
 
     var step3Section = document.querySelector('.step-3 .d-section');
@@ -511,7 +527,7 @@
 
   function initGlobe() {
     resize();
-    currentRotation = getBaseRotation();
+    currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
 
     loadTopology()
