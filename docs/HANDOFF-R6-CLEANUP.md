@@ -28,10 +28,23 @@ architecture that no longer exists.
 `assets/*.js` files for it first. The check costs seconds; a wrong deletion breaks the homepage. If a grep
 turns up a reference you did not expect, stop and report it rather than deleting anyway.
 
-**Before you touch anything:** nothing in this repository is committed — five rounds of work exist only in
-the working tree, and the last commit predates all of it. Commit the current working state first. Then do
-the cleanup as a series of small commits grouped by the sections below, so any single group can be
-reverted without unpicking the rest.
+**Commits.** The R5 globe work is committed at `93f8c37`, on top of a pre-R5 snapshot at `9b5a71c`. That
+is your restore point — verify with `git log --oneline -3` before starting, and if the working tree is
+dirty, commit it first so the cleanup starts from a clean state.
+
+Then do the cleanup as a series of small commits grouped by the sections below, so any single group can be
+reverted without unpicking the rest. Suggested grouping, one commit each:
+
+1. Remove agent scratch and build tooling (section 4)
+2. Remove the superseded pre-Cunnet build (section 5)
+3. Remove superseded design-round artefacts (section 6)
+4. Rewrite the project documentation (section 7)
+5. Move large media out of the repository (section 8)
+6. Prune the unused portion of the vendored theme (section 9)
+
+Write real commit messages in full plain English — say what was removed and why it was safe to remove,
+not just "cleanup". Anyone reading `git log` in six months should be able to tell whether a deleted file
+is recoverable and why it went.
 
 After each group, reload all three live pages with the browser console open and confirm no errors and no
 failed network requests.
@@ -189,9 +202,57 @@ is a worthwhile end state but it is a project of its own, not part of this task.
 
 Report the size of the repository before and after.
 
-## 12. Definition of done
+## 12. Deployment and the live site
 
-- [ ] Working state committed to a branch before any deletion.
+GitHub Pages for this repository is configured to serve the **`design` branch, root path** — confirmed
+via `gh api repos/lumivoxads/Draco/pages`, which returns `{"source":{"branch":"design","path":"/"}}`. The
+published site is `https://lumivoxads.github.io/Draco/`.
+
+**As of this document, the live site is several rounds out of date.** `origin/design` sits at `b80caec`,
+which predates all five rounds of design work. Everything from the client feedback round onward — the
+contact rail, the merged homepage, the vector globe — exists only locally. The client has therefore never
+seen any of it; their review comments describe the pre-round-1 site.
+
+This matters for cleanup in one specific way: **because Pages serves `design` directly, any push to that
+branch publishes immediately.** There is no staging step. A cleanup commit that accidentally removes a
+load-bearing asset goes straight to the client-visible URL.
+
+So:
+
+- Do **not** push. Complete the cleanup locally, verify it against a local server, and leave the push to
+  the repository owner. Deploying five rounds of unreviewed change to a client-facing URL is their
+  decision, not yours.
+- Say clearly in your summary how many commits are unpushed and what a push would publish.
+
+### Live URLs to re-test after the owner deploys
+
+All seven currently return 200. Re-check each after any deploy — a cleanup that removes a referenced
+asset will show up here as a 404 rather than in local testing, because a local server and Pages resolve
+paths differently:
+
+| URL | Expected |
+|---|---|
+| `https://lumivoxads.github.io/Draco/index.html` | 200, globe cycles through all four regions |
+| `https://lumivoxads.github.io/Draco/about.html` | 200 |
+| `https://lumivoxads.github.io/Draco/contact.html` | 200 |
+| `https://lumivoxads.github.io/Draco/index-loop.html` | 200, redirects to the homepage — the client's review document links here, so it must not 404 |
+| `https://lumivoxads.github.io/Draco/sitemap.xml` | 200 |
+| `https://lumivoxads.github.io/Draco/llms.txt` | 200 |
+| `https://lumivoxads.github.io/Draco/robots.txt` | 200 |
+
+Beyond status codes, confirm on the deployed homepage that: the Earth frame sequence loads all 240
+frames, `window.d3` and `window.topojson` are both defined, `#globe-canvas` exists and paints, the
+floating contact rail renders all three icons, and the console shows no errors beyond the known missing
+Bahrain id.
+
+Pay particular attention to **case sensitivity**. GitHub Pages is case-sensitive where macOS is not, so a
+path that resolves locally can 404 once deployed. This is the single most likely way for the cleanup to
+break the live site without any local symptom.
+
+## 13. Definition of done
+
+- [ ] Restore point confirmed at `93f8c37` / `9b5a71c`; any dirty working tree committed before deleting.
+- [ ] Cleanup landed as separate per-section commits with real, explanatory messages.
 - [ ] Every path verified with a grep before removal; unexpected references reported, not overridden.
 - [ ] Agent scratch removed: `node_modules/`, `package*.json`, `screenshot.js`, `generate_lab.py`,
       `.playwright-mcp/`, `docs/.DS_Store`.
@@ -207,3 +268,5 @@ Report the size of the repository before and after.
 - [ ] `index-loop.html` and `assets/vendor/` untouched.
 - [ ] All verification in section 11 passes, including the display typeface check.
 - [ ] Repository size before and after reported.
+- [ ] Nothing pushed. The number of unpushed commits and what a push would publish is stated plainly in
+      the summary, so the owner can make the deploy decision.
