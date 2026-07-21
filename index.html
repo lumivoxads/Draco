@@ -42,7 +42,7 @@
       html{overflow-x:hidden;}
       .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
 
-      .stage{position:relative;height:1000vh;}                 /* scroll distance the animation spans */
+      .stage{position:relative;height:1800vh;}                 /* extra scroll for globe region stops */
       .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#000;}
       /* top scrim so the nav stays legible over the bright planet */
       .sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:3;pointer-events:none;
@@ -206,10 +206,10 @@
             align-items: center;
             justify-content: flex-start;
             padding: 0 var(--d-pad) 100px;
-            padding-top: min(52vh, 420px);
          }
          .bento-fallback-mode .bento-grid { grid-template-columns: 1fr; }
       }
+
    </style>
 
    <!-- Structured data (SEO / AEO / GEO) -->

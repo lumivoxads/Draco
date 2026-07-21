@@ -2,33 +2,54 @@
 (function () {
   'use strict';
 
-  // PLACEHOLDER — client still preparing final region/country list
+  // Client region / vertical matrix (Jul 2026)
   var REGIONS = [
     {
-      region: 'Middle East',
-      anchor: [55.27, 25.20],
-      countryIds: ['784', '682', '634', '414', '512', '048'],
-      verticals: ['Retail', 'Hospitality', 'Fuel & Energy', 'Banking & Financial Services']
+      region: 'Africa',
+      anchor: [20, 5],
+      countryIds: ['710', '566', '818', '404', '012', '288', '834', '024', '108'],
+      verticals: ['BFSI', 'Fuel']
+    },
+    {
+      region: 'Asia',
+      anchor: [105, 10],
+      countryIds: ['392', '156', '356', '764', '360', '702', '410', '158', '704'],
+      verticals: ['Airline', 'Airport', 'Ecosystem', 'Hospitality', 'QSR', 'Retail', 'Retail / CPG']
+    },
+    {
+      region: 'Central America',
+      anchor: [-88, 14],
+      countryIds: ['484', '320', '188', '591', '340', '222', '558', '084'],
+      verticals: ['Airline', 'QSR', 'Retail / CPG']
+    },
+    {
+      region: 'Central Asia',
+      anchor: [67, 42],
+      countryIds: ['398', '860', '762', '795', '417'],
+      verticals: ['Airline']
     },
     {
       region: 'Europe',
-      anchor: [-0.13, 51.51],
-      countryIds: ['826', '276', '250', '724', '380', '528'],
-      verticals: ['Automotive', 'Telecommunications', 'E-Commerce']
+      anchor: [15, 50],
+      countryIds: ['826', '276', '250', '724', '380', '528', '616', '620', '752', '578'],
+      verticals: ['Airline', 'Ecosystem', 'Hospitality', 'Retail / CPG', 'Telco']
     },
     {
-      region: 'Asia Pacific',
-      anchor: [103.82, 1.35],
-      countryIds: ['458', '356', '036', '392', '764'],
-      verticals: ['Restaurants & Cafés', 'Healthcare', 'Lifestyle']
+      region: 'Middle East',
+      anchor: [55, 25],
+      countryIds: ['784', '682', '634', '414', '512', '048', '376', '400', '364'],
+      verticals: ['Airline', 'Hospitality', 'QSR', 'Retail', 'Retail / CPG']
     },
     {
-      region: 'Americas',
-      anchor: [-74.01, 40.71],
-      countryIds: ['840', '124', '076', '484'],
-      verticals: ['Entertainment', 'Enterprise Organisations']
+      region: 'North America',
+      anchor: [-98, 45],
+      countryIds: ['840', '124'],
+      verticals: ['Airline', 'Ecosystem', 'Hospitality']
     }
   ];
+
+  // Each region beat: ~78% scroll is a hold (globe stopped on region), ~22% transitions.
+  var REGION_HOLD = 0.78;
 
   var COLORS = {
     sphereFill: 'rgba(6,7,10,0.38)',
@@ -43,6 +64,7 @@
 
   var canvas = document.getElementById('globe-canvas');
   var scrim = document.getElementById('globe-scrim');
+  var verticalsSection = document.getElementById('verticals');
   var isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!canvas) return;
 
@@ -67,6 +89,7 @@
   var pulsePhase = 0;
   var step3Visible = false;
   var topologyReady = false;
+  var lastEarth = null;
 
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
@@ -88,16 +111,19 @@
     currentRotation[0] += shortestDelta(currentRotation[0], targetRotation[0]) * 0.08;
     currentRotation[1] += (targetRotation[1] - currentRotation[1]) * 0.08;
     currentRotation[2] += (targetRotation[2] - currentRotation[2]) * 0.08;
-    if (!allLit) currentRotation[0] += 0.04;
+    if (!allLit && !regionHoldLocked) currentRotation[0] += 0.04;
   }
 
-  function getGlobeLayout() {
-    var size = Math.min(innerWidth, innerHeight) * 0.8;
-    var mobile = innerWidth <= 768;
-    if (mobile) {
-      return { size: size, cx: innerWidth * 0.5, cy: innerHeight * 0.34, mobile: true };
+  var regionHoldLocked = false;
+
+  function getEarthLayout() {
+    if (window.DracoEarth && window.DracoEarth.earthOnScreen) {
+      return window.DracoEarth.earthOnScreen();
     }
-    return { size: size, cx: innerWidth * 0.30, cy: innerHeight * 0.5, mobile: false };
+    // Crude fallback only — reached if earth-scroll.js failed to load, in which
+    // case there is no photoreal Earth to register against anyway. Real values
+    // come from DracoEarth.earthOnScreen(), which applies the cover-fit.
+    return { cx: innerWidth * 0.336, cy: innerHeight * 0.446, r: innerWidth * 0.193 };
   }
 
   function resize() {
@@ -108,6 +134,40 @@
     canvas.style.height = innerHeight + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     path = d3.geoPath(projection, ctx);
+    if (topologyReady) positionPanel(getEarthLayout());
+  }
+
+  function positionPanel(e) {
+    if (!verticalsSection || !e) return;
+    lastEarth = e;
+
+    var mobile = innerWidth <= 768;
+    if (mobile) {
+      verticalsSection.style.flexDirection = 'column';
+      verticalsSection.style.alignItems = 'center';
+      verticalsSection.style.justifyContent = 'flex-start';
+      verticalsSection.style.padding = '0 var(--d-pad) 100px';
+      verticalsSection.style.paddingTop = Math.max(e.cy + e.r + 24, 120) + 'px';
+      return;
+    }
+
+    var rightSpace = innerWidth - (e.cx + e.r);
+    var leftSpace = e.cx - e.r;
+    var pad = 'var(--d-pad)';
+    verticalsSection.style.flexDirection = 'row';
+    verticalsSection.style.alignItems = 'center';
+    verticalsSection.style.padding = '0';
+    verticalsSection.style.paddingTop = '0';
+
+    if (rightSpace >= leftSpace) {
+      verticalsSection.style.justifyContent = 'flex-end';
+      verticalsSection.style.paddingRight = pad;
+      verticalsSection.style.paddingLeft = Math.max(e.cx + e.r + 24, 24) + 'px';
+    } else {
+      verticalsSection.style.justifyContent = 'flex-start';
+      verticalsSection.style.paddingLeft = pad;
+      verticalsSection.style.paddingRight = Math.max(innerWidth - (e.cx - e.r) + 24, 24) + 'px';
+    }
   }
 
   function getCountryHighlight(id) {
@@ -131,31 +191,28 @@
       return;
     }
 
-    var layout = getGlobeLayout();
-    var radius = layout.size * 0.46;
+    var e = getEarthLayout();
+    positionPanel(e);
     projection
-      .scale(radius)
-      .translate([layout.cx, layout.cy])
+      .scale(e.r)
+      .translate([e.cx, e.cy])
       .rotate(currentRotation);
 
     ctx.clearRect(0, 0, innerWidth, innerHeight);
 
     var hairline = Math.max(0.5, 1 / dpr);
 
-    // Sphere fill
     ctx.beginPath();
     path({ type: 'Sphere' });
     ctx.fillStyle = COLORS.sphereFill;
     ctx.fill();
 
-    // Graticule
     ctx.beginPath();
     path(graticule);
     ctx.strokeStyle = COLORS.graticule;
     ctx.lineWidth = hairline;
     ctx.stroke();
 
-    // Country outlines + highlights
     for (var i = 0; i < countries.length; i++) {
       var feature = countries[i];
       var id = String(feature.id);
@@ -173,14 +230,13 @@
       ctx.stroke();
     }
 
-    // Sphere outline
     ctx.beginPath();
     path({ type: 'Sphere' });
     ctx.strokeStyle = COLORS.sphereOutline;
     ctx.lineWidth = hairline;
     ctx.stroke();
 
-    drawMarkerAndConnector(layout, hairline);
+    drawMarkerAndConnector(e, hairline);
   }
 
   function lerpColorStroke(weight) {
@@ -191,12 +247,20 @@
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
 
-  function drawMarkerAndConnector(layout, hairline) {
+  function markerVisible(xy, e) {
+    if (!xy) return false;
+    var x = xy[0], y = xy[1];
+    if (x < -8 || y < -8 || x > innerWidth + 8 || y > innerHeight + 8) return false;
+    var dx = x - e.cx, dy = y - e.cy;
+    return (dx * dx + dy * dy) <= (e.r * e.r);
+  }
+
+  function drawMarkerAndConnector(e, hairline) {
     if (allLit || activeRegionIndex < 0) return;
 
     var region = REGIONS[activeRegionIndex];
     var xy = projection(region.anchor);
-    if (!xy) return;
+    if (!markerVisible(xy, e)) return;
 
     var pulse = isReduced ? 1 : 1 + Math.sin(pulsePhase) * 0.35;
     var markerR = 4 * pulse;
@@ -206,7 +270,7 @@
     ctx.fillStyle = COLORS.marker;
     ctx.fill();
 
-    if (layout.mobile || innerWidth < 992) return;
+    if (innerWidth < 992) return;
 
     var panel = document.getElementById('verticals-panel');
     if (!panel) return;
@@ -270,7 +334,22 @@
     var maxScroll = stage.offsetHeight - innerHeight;
     if (maxScroll <= 0) return 0;
     var pageProgress = clamp(rawScroll / maxScroll, 0, 1);
-    return clamp((pageProgress - 0.75) / 0.25, 0, 1);
+    return clamp((pageProgress - 0.76) / 0.24, 0, 1);
+  }
+
+  function mapSnappedBeats(raw) {
+    var totalBeats = REGIONS.length + 0.5;
+    if (raw <= 0) return 0;
+    if (raw >= 1) return totalBeats;
+
+    var pos = raw * totalBeats;
+    var idx = Math.floor(pos);
+    var local = pos - idx;
+
+    if (local < REGION_HOLD) return idx;
+
+    var t = (local - REGION_HOLD) / (1 - REGION_HOLD);
+    return Math.min(idx + t, totalBeats);
   }
 
   function updateFromScroll() {
@@ -286,10 +365,11 @@
     if (!step3Visible || isReduced) return;
 
     var prog = getScrollProgress();
-    var totalBeats = REGIONS.length + 0.5;
-    var beatFloat = prog * totalBeats;
+    var beatFloat = mapSnappedBeats(prog);
     var beatIndex = Math.floor(beatFloat);
     var beatFrac = beatFloat - beatIndex;
+    var inHold = beatFrac < 0.001 && beatIndex < REGIONS.length;
+    regionHoldLocked = inHold;
 
     if (beatIndex >= REGIONS.length) {
       allLit = true;
@@ -298,11 +378,15 @@
       targetRotation = anchorToRotation(REGIONS[REGIONS.length - 1].anchor);
     } else {
       allLit = false;
-      regionWeights = REGIONS.map(function (_, i) {
-        if (i === beatIndex) return clamp(beatFrac * 1.5, 0, 1);
-        if (i === beatIndex - 1) return clamp(1 - beatFrac * 1.5, 0, 1);
-        return 0;
-      });
+      if (inHold) {
+        regionWeights = REGIONS.map(function (_, i) { return i === beatIndex ? 1 : 0; });
+      } else {
+        regionWeights = REGIONS.map(function (_, i) {
+          if (i === beatIndex) return clamp(beatFrac * 1.5, 0, 1);
+          if (i === beatIndex - 1) return clamp(1 - beatFrac * 1.5, 0, 1);
+          return 0;
+        });
+      }
       targetRotation = anchorToRotation(REGIONS[beatIndex].anchor);
       renderPanel(beatIndex);
     }
