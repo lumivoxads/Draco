@@ -65,6 +65,12 @@
   var canvas = document.getElementById('globe-canvas');
   var scrim = document.getElementById('globe-scrim');
   var verticalsSection = document.getElementById('verticals');
+  var step3El = document.querySelector('.step-3');
+
+  // Shared thresholds from assets/scroll-loop.js; fallback matches its defaults
+  // in case that script fails to load. Region-beat rotation begins exactly at
+  // step3FadeEnd, i.e. once the globe/panel/scrim are already fully opaque.
+  var pacing = (window.DracoScroll && window.DracoScroll.pacing) || { step3FadeEnd: 0.48 };
   var isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!canvas) return;
 
@@ -158,11 +164,26 @@
 
     var mobile = innerWidth <= 768;
     if (mobile) {
+      var bottomPad = 100;
+      // Cap from above too: on a tall narrow viewport the globe's disc can reach
+      // most of the way down the screen, which pushed the card almost entirely
+      // off-screen. Never start the card lower than half the viewport so there
+      // is always real room for it, even if that means it sits over the lower
+      // edge of the globe.
+      var topPad = Math.min(Math.max(e.cy + e.r + 24, 120), innerHeight * 0.5);
       verticalsSection.style.flexDirection = 'column';
       verticalsSection.style.alignItems = 'center';
       verticalsSection.style.justifyContent = 'flex-start';
-      verticalsSection.style.padding = '0 var(--d-pad) 100px';
-      verticalsSection.style.paddingTop = Math.max(e.cy + e.r + 24, 120) + 'px';
+      verticalsSection.style.padding = '0 var(--d-pad) ' + bottomPad + 'px';
+      verticalsSection.style.paddingTop = topPad + 'px';
+
+      // Cap the card to whatever space is actually left below the globe, so the
+      // whole card (border to border) stays on-screen instead of running off
+      // the bottom of the viewport — the globe's own position is untouched.
+      var panelEl = document.getElementById('verticals-panel');
+      if (panelEl) {
+         panelEl.style.maxHeight = 'calc(100vh - ' + (topPad + bottomPad) + 'px - 20px)';
+      }
       return;
     }
 
@@ -342,14 +363,9 @@
     }, 50);
   }
 
-  function getScrollProgress() {
-    var stage = document.querySelector('.stage');
-    if (!stage) return 0;
-    var rawScroll = Math.max(0, -stage.getBoundingClientRect().top);
-    var maxScroll = stage.offsetHeight - innerHeight;
-    if (maxScroll <= 0) return 0;
-    var pageProgress = clamp(rawScroll / maxScroll, 0, 1);
-    return clamp((pageProgress - 0.76) / 0.24, 0, 1);
+  function getScrollProgress(pageProgress) {
+    var start = pacing.step3FadeEnd;
+    return clamp((pageProgress - start) / (1 - start), 0, 1);
   }
 
   function mapSnappedBeats(raw) {
@@ -367,9 +383,8 @@
     return Math.min(idx + t, totalBeats);
   }
 
-  function updateFromScroll() {
-    var step3 = document.querySelector('.step-3');
-    var opacity = step3 ? parseFloat(step3.style.opacity || '0') : 0;
+  function updateFromScroll(pageProgress) {
+    var opacity = step3El ? parseFloat(step3El.style.opacity || '0') : 0;
     step3Visible = opacity > 0.05;
 
     if (scrim) {
@@ -379,7 +394,7 @@
 
     if (!step3Visible || isReduced) return;
 
-    var prog = getScrollProgress();
+    var prog = getScrollProgress(pageProgress);
     var beatFloat = mapSnappedBeats(prog);
     var beatIndex = Math.floor(beatFloat);
     var beatFrac = beatFloat - beatIndex;
@@ -406,14 +421,16 @@
     }
   }
 
-  function tick() {
+  // Shared-loop participant (assets/scroll-loop.js drives the one rAF for the
+  // whole page). Registered unconditionally; no-ops until topology has loaded.
+  function updateGlobe(time, progress) {
+    if (!topologyReady) return;
     if (!isReduced) {
       pulsePhase += 0.08;
       easeRotation();
     }
-    updateFromScroll();
+    updateFromScroll(progress);
     drawGlobe();
-    if (!isReduced) requestAnimationFrame(tick);
   }
 
   function verifyCountryIds(topology) {
@@ -538,7 +555,15 @@
           return;
         }
         renderPanel(0);
-        tick();
+        if (window.DracoScroll) {
+          window.DracoScroll.register(updateGlobe);
+        } else {
+          // Defensive fallback if the shared loop failed to load.
+          (function fallbackTick(t) {
+            updateGlobe(t, 0);
+            requestAnimationFrame(fallbackTick);
+          })(0);
+        }
       })
       .catch(function (err) {
         console.error('[verticals-globe]', err);
@@ -553,11 +578,6 @@
         drawGlobe();
       }, 150);
     });
-
-    window.addEventListener('scroll', function () {
-      if (isReduced) return;
-      updateFromScroll();
-    }, { passive: true });
   }
 
   if (typeof d3 === 'undefined' || typeof topojson === 'undefined') {

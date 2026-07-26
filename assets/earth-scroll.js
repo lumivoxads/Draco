@@ -24,7 +24,6 @@
    // from cx/cy/r, which only register the disc boundary.
    var EARTH_BASE_ROTATION = [98, -45, 0];
 
-   var stage = document.querySelector('.stage');
    var scrollHint = document.querySelector('.scroll-hint');
    var step1 = document.querySelector('.step-1');
    var step2 = document.querySelector('.step-2');
@@ -35,6 +34,13 @@
    var isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
    var holdForStep3 = false;
    var step3Active = false;
+
+   // Shared thresholds from assets/scroll-loop.js; fallback matches its defaults
+   // in case that script fails to load.
+   var pacing = (window.DracoScroll && window.DracoScroll.pacing) || {
+      hintFadeEnd: 0.04, heroHoldEnd: 0.30, heroFadeOutEnd: 0.36,
+      step3FadeStart: 0.40, step3FadeEnd: 0.48
+   };
 
    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
    function pathFor(i) { return DIR + 'frame_' + String(i).padStart(4, '0') + '.' + EXT; }
@@ -96,57 +102,60 @@
       ctx.drawImage(img, fit.ox, fit.oy, fit.w, fit.h);
    }
 
-   function tick(t) {
-      if (!isReduced) requestAnimationFrame(tick);
-      if (window.DracoEarth && window.DracoEarth.pause) return;
-      if (holdForStep3 || step3Active) return;
-      if (t - last < interval) return;
-      last = t;
-      drawFrame(frame);
-      frame += step;
-      if (frame >= COUNT - 1) { frame = COUNT - 1; step = -1; }
-      else if (frame <= 0) { frame = 0; step = 1; }
-   }
+   // Single participant in the shared frame loop (assets/scroll-loop.js): advances
+   // the idle photo sequence on its own fps throttle, then applies the scroll-driven
+   // reveal math. `progress` is the pre-computed, cache-backed 0..1 stage position —
+   // no DOM geometry reads happen here.
+   function updateEarth(time, progress) {
+      if (!holdForStep3 && !step3Active && !window.DracoEarth.pause) {
+         if (time - last >= interval) {
+            last = time;
+            drawFrame(frame);
+            frame += step;
+            if (frame >= COUNT - 1) { frame = COUNT - 1; step = -1; }
+            else if (frame <= 0) { frame = 0; step = 1; }
+         }
+      }
 
-   function onScroll() {
-      if (isReduced) return;
-      var rawScroll = Math.max(0, -stage.getBoundingClientRect().top);
-      var maxScroll = stage.offsetHeight - innerHeight;
-      var progress = maxScroll > 0 ? clamp(rawScroll / maxScroll, 0, 1) : 0;
+      var P = pacing;
+      if (scrollHint) scrollHint.style.opacity = String(clamp(1 - progress / P.hintFadeEnd, 0, 1));
 
-      if (scrollHint) scrollHint.style.opacity = String(clamp(1 - progress / 0.05, 0, 1));
+      // Steps 1 (headline) and 2 (quote) are one combined section — both are
+      // fully visible from the very top of the page (the landing stop point)
+      // and fade out together rather than crossfading one for the other.
+      var heroVal = clamp(1 - (progress - P.heroHoldEnd) / (P.heroFadeOutEnd - P.heroHoldEnd), 0, 1);
 
       if (step1) {
-         var o1 = clamp(1 - (progress - 0.35) / 0.1, 0, 1);
-         step1.style.opacity = String(o1);
-         step1.style.transform = 'translateY(' + ((1 - o1) * 30) + 'px)';
-         step1.style.pointerEvents = o1 > 0.5 ? 'auto' : 'none';
+         step1.style.opacity = String(heroVal);
+         step1.style.transform = 'translateY(' + ((1 - heroVal) * 30) + 'px)';
+         step1.style.pointerEvents = heroVal > 0.5 ? 'auto' : 'none';
       }
 
       if (step2) {
-         var p2 = clamp((progress - 0.40) / 0.1, 0, 1);
-         var o2 = clamp(1 - (progress - 0.66) / 0.08, 0, 1);
-         var val2 = p2 * o2;
-         step2.style.opacity = String(val2);
-         step2.style.transform = 'translateY(' + ((1 - p2) * 30 - (1 - o2) * 30) + 'px)';
-         step2.style.pointerEvents = val2 > 0.5 ? 'auto' : 'none';
+         step2.style.opacity = String(heroVal);
+         step2.style.transform = 'translateY(' + ((1 - heroVal) * 30) + 'px)';
+         step2.style.pointerEvents = heroVal > 0.5 ? 'auto' : 'none';
 
          var rail = document.querySelector('.contact-rail');
          if (rail) {
-            if (val2 > 0.8) rail.classList.add('highlight');
+            if (heroVal > 0.8) rail.classList.add('highlight');
             else rail.classList.remove('highlight');
          }
       }
 
       if (step3) {
-         var p3 = clamp((progress - 0.76) / 0.14, 0, 1);
+         var p3 = clamp((progress - P.step3FadeStart) / (P.step3FadeEnd - P.step3FadeStart), 0, 1);
          step3.style.opacity = String(p3);
          step3.style.transform = 'translateY(' + ((1 - p3) * 30) + 'px)';
          step3.style.pointerEvents = p3 > 0.5 ? 'auto' : 'none';
       }
 
+      // step3 is only considered "active" once fully opaque (P.step3FadeEnd) —
+      // this is also where the region-beat rotation begins (verticals-globe.js),
+      // so the globe, glass panel, and black overlay are already fully loaded by
+      // the moment the first region's beat starts.
       var wasStep3 = step3Active;
-      step3Active = progress >= 0.76;
+      step3Active = progress >= P.step3FadeEnd;
       window.DracoEarth.step3Active = step3Active;
 
       if (step3Active && !wasStep3) {
@@ -160,18 +169,81 @@
       }
    }
 
-   for (var i = 0; i < COUNT; i++) {
-      (function (idx) {
-         var im = new Image();
-         im.onload = function () { if (idx === 0) { drawFrame(0); if (isReduced) drawFrame(0); } };
-         im.src = pathFor(idx + 1);
-         imgs[idx] = im;
-      })(i);
+   // Eager-load enough of the sequence that the hero is alive immediately and the
+   // held globe-act frame (HOLD_FRAME) is guaranteed available whenever a user
+   // reaches it; the remainder trickles in during idle time so decode work stays
+   // off the early-scroll critical path.
+   var EAGER_COUNT = Math.min(COUNT, Math.max(30, HOLD_FRAME + 1));
+   var idleHandle = typeof requestIdleCallback === 'function'
+      ? requestIdleCallback
+      : function (fn) { return setTimeout(fn, 200); };
+
+   function loadFrame(idx) {
+      var im = new Image();
+      im.decoding = 'async';
+      im.onload = function () {
+         if (idx === 0) {
+            drawFrame(0);
+            if (window.DracoScroll) window.DracoScroll.refreshMetrics();
+         }
+         if (typeof im.decode === 'function') im.decode().catch(function () {});
+      };
+      im.src = pathFor(idx + 1);
+      imgs[idx] = im;
    }
 
-   addEventListener('scroll', onScroll, { passive: true });
+   function loadRemainingIdle(idx) {
+      if (idx >= COUNT) return;
+      idleHandle(function () {
+         loadFrame(idx);
+         loadRemainingIdle(idx + 1);
+      });
+   }
+
+   for (var i = 0; i < EAGER_COUNT; i++) loadFrame(i);
+   loadRemainingIdle(EAGER_COUNT);
+
    addEventListener('resize', resize);
    resize();
-   onScroll();
-   if (!isReduced) requestAnimationFrame(tick);
+
+   // Steps 1+2 are shown together now, so on narrow/short phones the quote
+   // (bottom-anchored) can run into the headline (top-anchored) depending on
+   // exact device metrics and font rendering — CSS breakpoints alone can't
+   // guarantee a gap across every phone size. Measure and reposition instead.
+   function layoutMobileHero() {
+      var hc = step1 && step1.querySelector('.hero-copy');
+      var hq = step2 && step2.querySelector('.hero-quote');
+      if (!hc || !hq) return;
+
+      hq.style.top = '';
+      hq.style.bottom = '';
+      if (innerWidth > 600) return;
+
+      var gap = 28;
+      var minTop = hc.getBoundingClientRect().bottom + gap;
+      if (hq.getBoundingClientRect().top < minTop) {
+         hq.style.bottom = 'auto';
+         hq.style.top = minTop + 'px';
+      }
+   }
+
+   var mobileHeroResizeTimer;
+   addEventListener('resize', function () {
+      clearTimeout(mobileHeroResizeTimer);
+      mobileHeroResizeTimer = setTimeout(layoutMobileHero, 150);
+   });
+   layoutMobileHero();
+   addEventListener('load', layoutMobileHero); // fonts can shift text height after first layout
+
+   if (isReduced) {
+      // Matches prior behaviour: reduced motion renders the CSS-only stacked
+      // fallback and never drives the photo loop or reveal math from here.
+   } else if (window.DracoScroll) {
+      updateEarth(performance.now(), window.DracoScroll.getProgress()); // set initial state before first paint
+      window.DracoScroll.register(updateEarth);
+   } else {
+      // Defensive fallback if the shared loop failed to load.
+      addEventListener('scroll', function () { updateEarth(performance.now(), 0); }, { passive: true });
+      requestAnimationFrame(function raf(t) { updateEarth(t, 0); requestAnimationFrame(raf); });
+   }
 })();

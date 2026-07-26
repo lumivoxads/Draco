@@ -4,7 +4,7 @@
 <head>
    <meta charset="utf-8">
    <meta http-equiv="x-ua-compatible" content="ie=edge">
-   <title>Draco — Enterprise Loyalty Solutions Partner</title>
+   <title>PREVIEW — Vertical Detail Panel — Draco</title>
    <meta name="description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
@@ -98,7 +98,11 @@
          padding: 32px;
          pointer-events: auto;
          transition: opacity 0.4s ease;
-         overflow-y: auto; /* mobile: assets/verticals-globe.js caps max-height to fit below the globe */
+         /* PREVIEW-ONLY: the click-to-expand detail can grow taller than the
+            viewport — scroll inside the panel instead of overflowing into the
+            fixed header. */
+         max-height: 82vh;
+         overflow-y: auto;
       }
       .panel-header {
          border-bottom: 1px solid var(--d-accent);
@@ -125,11 +129,86 @@
          background: transparent;
          opacity: 0;
          transform: translateY(10px);
-         transition: opacity 0.4s ease, transform 0.4s ease;
+         transition: opacity 0.4s ease, transform 0.4s ease, background 0.25s ease, border-color 0.25s ease;
+         cursor: pointer;
       }
       .v-chip.show {
          opacity: 1;
          transform: translateY(0);
+      }
+      .v-chip:hover, .v-chip.active {
+         background: rgba(201, 169, 106, 0.14);
+         border-color: var(--d-accent);
+      }
+
+      /* PREVIEW-ONLY: click-to-expand vertical detail (assets/vertical-detail-preview.js) */
+      .vertical-detail {
+         margin-top: 20px;
+         padding-top: 20px;
+         border-top: 1px solid var(--d-line);
+         max-height: 0;
+         overflow: hidden;
+         opacity: 0;
+         transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease, padding-top 0.4s ease;
+      }
+      .vertical-detail.open {
+         margin-top: 20px;
+         padding-top: 20px;
+         max-height: 600px; /* comfortably above real content; outer .glass-panel scrolls, not this */
+         opacity: 1;
+      }
+      .vertical-detail .vd-close {
+         float: right;
+         background: none;
+         border: 0;
+         color: var(--d-muted);
+         font-size: 1.1rem;
+         cursor: pointer;
+         line-height: 1;
+         padding: 0 0 8px 8px;
+      }
+      .vertical-detail .vd-close:hover { color: var(--d-accent); }
+      .vertical-detail h3 {
+         margin: 0 0 12px;
+         font-size: 1.3rem;
+         color: var(--d-accent);
+         padding-right: 28px;
+      }
+      .vertical-detail p {
+         margin: 0 0 12px;
+         font-size: 0.92rem;
+         line-height: 1.6;
+         color: var(--d-muted);
+      }
+      .vertical-detail ul {
+         margin: 0 0 16px;
+         padding-left: 18px;
+      }
+      .vertical-detail li {
+         font-size: 0.88rem;
+         line-height: 1.55;
+         color: var(--d-muted);
+         margin-bottom: 8px;
+      }
+      .vertical-detail li strong { color: var(--d-fg); }
+      .vertical-detail .vd-cta {
+         display: inline-flex;
+         align-items: center;
+         gap: 8px;
+         margin-top: 4px;
+         padding: 10px 20px;
+         border-radius: 100px;
+         background: var(--d-accent);
+         color: #06070a;
+         font-size: 0.88rem;
+         font-weight: 600;
+         text-decoration: none;
+         transition: opacity 0.2s ease;
+      }
+      .vertical-detail .vd-cta:hover { opacity: 0.85; }
+
+      @media (max-width: 600px) {
+         .glass-panel { max-height: 74vh; }
       }
 
       /* Stack multiple panels in reduced-motion fallback */
@@ -198,20 +277,13 @@
 
       @media (max-width:600px){
          .scrim{background:linear-gradient(to top, rgba(3,4,6,.72) 0%, transparent 42%),linear-gradient(to bottom, rgba(3,4,6,.55), transparent 28%);}
-         /* Steps 1+2 are combined into one view on mobile too (assets/earth-scroll.js
-            fades them in/out together) — anchor the headline to the top and let the
-            quote take the full width instead of a 42%-wide column, or the two blocks
-            collide in the vertical middle of a narrow, tall viewport. */
          .overlay.step-1{align-items:flex-start;text-align:left;padding:0 var(--d-pad);justify-content:flex-start;padding-top:112px;}
          .overlay.step-2{align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
          .hero-copy .d-eyebrow{flex-direction:row;}
          .hero-copy .note,.hero-copy .lead{margin-left:0;margin-right:0;}
          .hero-copy h1{font-size:clamp(2rem,9vw,3rem);}
-         /* Reserve room on the right for the fixed .contact-rail (site.css: right:16px,
-            48px/44px buttons ≈ 70px footprint) so the now-wider quote text never
-            wraps under those icons. */
          .hero-quote{max-width:calc(100% - 2*var(--d-pad) - 76px);bottom:28px;}
-         .scroll-hint{display:none;} /* would collide with the quote's last line at this bottom offset; the quote's own arrow already signals to keep scrolling */
+         .scroll-hint{display:none;}
          .glass-panel { max-width: none; }
          .step-3 .d-section#verticals {
             flex-direction: column;
@@ -334,7 +406,7 @@
          <!-- Step 3: Verticals -->
          <div class="overlay step-3" style="align-items: flex-start; text-align: left; padding: 0; pointer-events: none;">
             <section class="d-section" id="verticals" style="width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: var(--d-pad);">
-               <div class="glass-panel" id="verticals-panel">
+               <div class="glass-panel" id="verticals-panel" data-lenis-prevent>
                   <div class="panel-header">
                      <h2 class="d-display region-name" id="region-name">Region Name</h2>
                   </div>
@@ -367,5 +439,6 @@
    <script src="assets/vendor/d3-geo.min.js"></script>
    <script src="assets/vendor/topojson-client.min.js"></script>
    <script src="assets/verticals-globe.js"></script>
+   <script src="assets/vertical-detail-preview.js"></script>
 </body>
 </html>
