@@ -1,5 +1,11 @@
 # Handoff prompt — Draco, vector-geometry globe for Verticals & Geographies
 
+> **Superseded, 28 July 2026.** The home page was rebuilt as a fixed video stage with eight
+> scroll-snap screens, and the still Earth frame sequence, the Lenis smooth scroll and the
+> scroll-driven globe described below no longer exist on that page. Kept for history only.
+> Current design: `docs/superpowers/specs/2026-07-28-home-video-stage-design.md`.
+
+
 This is **one final attempt** at the globe direction, using a different technique from the failed one.
 
 `docs/HANDOFF-R4-REVERT-TO-BENTO.md` remains the **fallback**. If this attempt does not produce a crisp,

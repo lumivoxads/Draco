@@ -8,7 +8,9 @@ screenshot.js
 generate_lab.py
 .playwright-mcp/
 
-# Source video for the Earth frame sequence — frames are committed, sources are not
+# Raw source video dropped straight into assets/ is scratch and is not committed.
+# The shipped background loop lives in assets/video/ and IS committed — this
+# pattern is deliberately one level deep so it never swallows that file.
 assets/*.mp4
 
 .claude/settings.local.json

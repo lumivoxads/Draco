@@ -230,69 +230,9 @@
          .glass-panel { max-height: 74vh; }
       }
 
-      /* Stack multiple panels in reduced-motion fallback */
-      .reduced-globe-mode .d-section#verticals,
-      .fallback-mode .d-section#verticals {
-         pointer-events: auto;
-         opacity: 1 !important;
-         transform: none !important;
-      }
-      .reduced-globe-mode .v-chip,
-      .fallback-mode .v-chip {
-         opacity: 1;
-         transform: none;
-         transition: none;
-      }
-
-      /* Bento fallback (topology failure) */
-      .bento-fallback-mode .verticals-bento-wrap {
-         width: 100%;
-         max-width: 1320px;
-         margin: 0 auto;
-         padding: 80px var(--d-pad) 120px;
-      }
-      .bento-fallback-mode .bento-grid {
-         display: grid;
-         gap: 20px;
-         grid-template-columns: repeat(4, 1fr);
-         margin-top: 24px;
-      }
-      .bento-fallback-mode .bento-card {
-         background: rgba(12, 15, 20, 0.4);
-         backdrop-filter: blur(12px);
-         -webkit-backdrop-filter: blur(12px);
-         border: 1px solid var(--d-line-2);
-         border-radius: 16px;
-         padding: 32px;
-      }
-      .bento-fallback-mode .bento-card.feat {
-         grid-column: span 2;
-         grid-row: span 2;
-      }
-      .bento-fallback-mode .bento-card h3 {
-         font-family: var(--d-ff-disp);
-         font-size: 1.8rem;
-         text-transform: uppercase;
-         margin: 0 0 16px;
-         color: var(--d-fg);
-         border-bottom: 1px solid var(--d-accent);
-         padding-bottom: 12px;
-      }
-      .bento-fallback-mode .bento-card.feat h3 { font-size: 2.4rem; }
-      .bento-fallback-mode .bento-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-      .bento-fallback-mode .bento-chip {
-         font-size: 13px;
-         color: var(--d-fg);
-         padding: 6px 14px;
-         border: 1px solid var(--d-accent-dim);
-         border-radius: 100px;
-         background: rgba(201,169,106,0.05);
-      }
-
-      @media (max-width:991px){
-         .bento-fallback-mode .bento-grid { grid-template-columns: repeat(2, 1fr); }
-         .bento-fallback-mode .bento-card.feat { grid-column: span 1; grid-row: span 1; }
-      }
+      /* Fallbacks (reduced motion, or topology failure) hide the globe and reveal
+         every card at once. The region cards are static markup, so nothing needs
+         to be restyled — assets/verticals-globe.js only adds .show to the chips. */
 
       /* 768px, matching the mobile threshold assets/verticals-globe.js already uses.
          Below this the 46% copy column is too narrow to hold the headline lines. */
@@ -315,7 +255,6 @@
             max-width:calc(100% - var(--d-pad) - 76px);}
          .scroll-hint{display:none;} /* would collide with the quote's last line; the quote's own arrow already signals to keep scrolling */
          .glass-panel { max-width: none; }
-         .bento-fallback-mode .bento-grid { grid-template-columns: 1fr; }
       }
 
    </style>

@@ -1,5 +1,11 @@
 # Handoff prompt — Draco, register the vector globe onto the photoreal Earth
 
+> **Superseded, 28 July 2026.** The home page was rebuilt as a fixed video stage with eight
+> scroll-snap screens, and the still Earth frame sequence, the Lenis smooth scroll and the
+> scroll-driven globe described below no longer exist on that page. Kept for history only.
+> Current design: `docs/superpowers/specs/2026-07-28-home-video-stage-design.md`.
+
+
 Paste everything below this line into Antigravity as the opening message.
 
 ---

@@ -76,7 +76,6 @@
 
   var dpr = 1;
   var countries = [];
-  var countryById = {};
   var projection = d3.geoOrthographic().clipAngle(90);
   var path = null;
   var graticule = d3.geoGraticule10();
@@ -383,7 +382,6 @@
     }
 
     countries = features;
-    countryById = idSet;
     return missing;
   }
 
