@@ -48,9 +48,6 @@
     }
   ];
 
-  // Each region beat: ~78% scroll is a hold (globe stopped on region), ~22% transitions.
-  var REGION_HOLD = 0.78;
-
   var COLORS = {
     sphereFill: 'rgba(6,7,10,0.38)',
     graticule: 'rgba(244,246,248,0.08)',
@@ -63,8 +60,10 @@
   };
 
   var canvas = document.getElementById('globe-canvas');
-  var verticalsSection = document.getElementById('verticals');
-  var pinEl = document.querySelector('.verticals-pin');
+  // One .screen-inner per region screen — all laid out identically, since the
+  // globe's disc position depends only on the viewport, not on which screen is on.
+  var screenInners = [].slice.call(document.querySelectorAll('.screen-region .screen-inner'));
+  var regionScreens = [].slice.call(document.querySelectorAll('.screen-region'));
 
   var isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!canvas) return;
@@ -85,6 +84,7 @@
   var currentRotation = [0, 0, 0];
   var targetRotation = [0, 0, 0];
   var regionWeights = REGIONS.map(function () { return 0; });
+  var targetWeights = REGIONS.map(function () { return 0; });
   var activeRegionIndex = -1;
   var allLit = false;
   var pulsePhase = 0;
@@ -92,30 +92,10 @@
   var topologyReady = false;
   var lastEarth = null;
 
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function anchorToRotation(anchor) {
     return [-anchor[0], -anchor[1], 0];
-  }
-
-  function lerpAngle(a, b, t) {
-    return a + shortestDelta(a, b) * t;
-  }
-
-  function rotationForBeat(beatFloat) {
-    var last = REGIONS.length - 1;
-    if (beatFloat >= last) return anchorToRotation(REGIONS[last].anchor);
-    var idx = Math.floor(beatFloat);
-    var frac = beatFloat - idx;
-    var from = anchorToRotation(REGIONS[idx].anchor);
-    var to = anchorToRotation(REGIONS[idx + 1].anchor);
-    return [
-      lerpAngle(from[0], to[0], frac),
-      from[1] + (to[1] - from[1]) * frac,
-      from[2] + (to[2] - from[2]) * frac
-    ];
   }
 
   function shortestDelta(from, to) {
@@ -132,12 +112,11 @@
     currentRotation[2] += (targetRotation[2] - currentRotation[2]) * 0.08;
   }
 
-  // Earth's disc in the static background frame (assets/earth-frames/dark/
-  // frame_0120.jpg, 1280×720), as fractions of frame width/height — calibrated
-  // visually Jul 2026, confirmed on all four limb edges. The frame is rendered
-  // as a plain centered object-fit:cover <img> now (index.html .bg-image), so
-  // this reproduces that same centered cover-fit math directly instead of
-  // reading it from the old scroll-scrubbed canvas (assets/earth-scroll.js).
+  // Where the globe's disc sits on screen, as fractions of a 1280×720 frame —
+  // calibrated visually Jul 2026 against the still Earth, confirmed on all four
+  // limb edges. These values fix the vector globe's size and centre and must not
+  // be changed; the background video is no longer registered to them (see
+  // docs/superpowers/specs/2026-07-28-home-video-stage-design.md).
   var EARTH_FRAME_W = 1280;
   var EARTH_FRAME_H = 720;
   var EARTH_CX_FRAC = 0.3360;
@@ -172,8 +151,13 @@
   }
 
   function positionPanel(e) {
-    if (!verticalsSection || !e) return;
+    if (!e) return;
     lastEarth = e;
+    for (var s = 0; s < screenInners.length; s++) positionOnePanel(screenInners[s], e);
+  }
+
+  function positionOnePanel(verticalsSection, e) {
+    if (!verticalsSection) return;
 
     var mobile = innerWidth <= 768;
     if (mobile) {
@@ -193,9 +177,9 @@
       // Cap the card to whatever space is actually left below the globe, so the
       // whole card (border to border) stays on-screen instead of running off
       // the bottom of the viewport — the globe's own position is untouched.
-      var panelEl = document.getElementById('verticals-panel');
+      var panelEl = verticalsSection.querySelector('.glass-panel');
       if (panelEl) {
-         panelEl.style.maxHeight = 'calc(100vh - ' + (topPad + bottomPad) + 'px - 20px)';
+         panelEl.style.maxHeight = 'calc(100svh - ' + (topPad + bottomPad) + 'px - 20px)';
       }
       return;
     }
@@ -321,7 +305,8 @@
 
     if (innerWidth < 992) return;
 
-    var panel = document.getElementById('verticals-panel');
+    var activeScreen = regionScreens[activeRegionIndex];
+    var panel = activeScreen && activeScreen.querySelector('.glass-panel');
     if (!panel) return;
     var rect = panel.getBoundingClientRect();
     if (rect.width <= 0) return;
@@ -337,114 +322,47 @@
     ctx.stroke();
   }
 
-  function renderPanel(index) {
-    if (index === activeRegionIndex && index !== -1) return;
-    activeRegionIndex = index;
-
-    var panel = document.getElementById('verticals-panel');
-    if (!panel) return;
-
-    if (index === -1 || allLit) {
-      panel.style.opacity = '0';
-      panel.style.pointerEvents = 'none';
-      return;
-    }
-
-    panel.style.opacity = '1';
-    panel.style.pointerEvents = 'auto';
-    var r = REGIONS[index];
-    var title = document.getElementById('region-name');
-    if (title) title.textContent = r.region;
-
-    var chipsContainer = document.getElementById('verticals-chips');
-    if (!chipsContainer) return;
-
-    chipsContainer.innerHTML = r.verticals.map(function (v) {
-      return '<div class="v-chip">' + v + '</div>';
-    }).join('');
-
+  // Reveal a screen's chips in sequence the first time it becomes active.
+  function revealChips(screen) {
+    if (!screen || screen.dataset.chipsShown === '1') return;
+    screen.dataset.chipsShown = '1';
+    var chips = screen.querySelectorAll('.v-chip');
     if (isReduced) {
-      chipsContainer.querySelectorAll('.v-chip').forEach(function (c) { c.classList.add('show'); });
+      chips.forEach(function (c) { c.classList.add('show'); });
       return;
     }
-
-    setTimeout(function () {
-      var chips = chipsContainer.querySelectorAll('.v-chip');
-      chips.forEach(function (c, i) {
-        setTimeout(function () { c.classList.add('show'); }, i * 50);
-      });
-    }, 50);
+    chips.forEach(function (c, i) {
+      setTimeout(function () { c.classList.add('show'); }, 120 + i * 50);
+    });
   }
 
-  function getSectionProgress() {
-    if (window.DracoScroll && window.DracoScroll.sectionProgress) {
-      return window.DracoScroll.sectionProgress(pinEl);
-    }
-    // Defensive fallback if the shared loop failed to load.
-    if (!pinEl) return 0;
-    var maxScroll = pinEl.offsetHeight - innerHeight;
-    if (maxScroll <= 0) return 0;
-    var rect = pinEl.getBoundingClientRect();
-    return clamp(-rect.top / maxScroll, 0, 1);
+  // Public driver, called by assets/home-stage.js when a region screen becomes
+  // active. Rotation is eased on a timer from here (easeRotation, called every
+  // frame) rather than being dragged by scroll position.
+  function setActiveRegion(index) {
+    if (index < 0 || index >= REGIONS.length || index === activeRegionIndex) return;
+    activeRegionIndex = index;
+    allLit = false;
+    targetRotation = anchorToRotation(REGIONS[index].anchor);
+    targetWeights = REGIONS.map(function (_, i) { return i === index ? 1 : 0; });
+    revealChips(regionScreens[index]);
   }
 
-  function mapSnappedBeats(raw) {
-    var totalBeats = REGIONS.length + 0.5;
-    if (raw <= 0) return 0;
-    if (raw >= 1) return totalBeats;
+  function setVisible(v) { sectionVisible = !!v; }
 
-    var pos = raw * totalBeats;
-    var idx = Math.floor(pos);
-    var local = pos - idx;
-
-    if (local < REGION_HOLD) return idx;
-
-    var t = (local - REGION_HOLD) / (1 - REGION_HOLD);
-    return Math.min(idx + t, totalBeats);
-  }
-
-  function updateFromScroll() {
-    if (!sectionVisible || isReduced) return;
-
-    var prog = getSectionProgress();
-    var beatFloat = mapSnappedBeats(prog);
-    var beatIndex = Math.floor(beatFloat);
-    var beatFrac = beatFloat - beatIndex;
-    var inHold = beatFrac < 0.001 && beatIndex < REGIONS.length;
-
-    if (beatIndex >= REGIONS.length) {
-      allLit = true;
-      regionWeights = REGIONS.map(function () { return 1; });
-      renderPanel(-1);
-      targetRotation = anchorToRotation(REGIONS[REGIONS.length - 1].anchor);
-    } else {
-      allLit = false;
-      if (inHold) {
-        regionWeights = REGIONS.map(function (_, i) { return i === beatIndex ? 1 : 0; });
-      } else {
-        regionWeights = REGIONS.map(function (_, i) {
-          if (i === beatIndex) return clamp(beatFrac * 1.5, 0, 1);
-          if (i === beatIndex - 1) return clamp(1 - beatFrac * 1.5, 0, 1);
-          return 0;
-        });
-      }
-      targetRotation = rotationForBeat(beatFloat);
-      renderPanel(beatIndex);
+  function easeWeights() {
+    for (var i = 0; i < regionWeights.length; i++) {
+      regionWeights[i] += (targetWeights[i] - regionWeights[i]) * 0.12;
     }
   }
 
-  // Shared-loop participant (assets/scroll-loop.js drives the one rAF for the
-  // whole page). Registered unconditionally; no-ops until topology has loaded.
-  // Local scroll progress (getSectionProgress) is read fresh each frame rather
-  // than taking a page-wide progress argument — this is the only section left
-  // that animates on scroll, so it paces itself off its own .verticals-pin.
   function updateGlobe() {
     if (!topologyReady) return;
     if (!isReduced) {
       pulsePhase += 0.08;
       easeRotation();
+      easeWeights();
     }
-    updateFromScroll();
     drawGlobe();
   }
 
@@ -469,70 +387,25 @@
     return missing;
   }
 
+  // Reduced motion: the region cards are already in the markup, so nothing is
+  // rebuilt — every region is simply lit and every chip revealed at once.
   function initReducedMotion() {
-    document.body.classList.add('fallback-mode', 'reduced-globe-mode');
+    document.body.classList.add('fallback-mode', 'reduced-globe-mode', 'reduced-motion');
     allLit = true;
     regionWeights = REGIONS.map(function () { return 1; });
+    targetWeights = regionWeights.slice();
     currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
-
-    var section = document.getElementById('verticals');
-    if (section) {
-      section.innerHTML = '';
-      section.style.flexDirection = 'column';
-      section.style.alignItems = 'center';
-      section.style.gap = '24px';
-      section.style.padding = '80px var(--d-pad) 120px';
-
-      REGIONS.forEach(function (r) {
-        var panel = document.createElement('div');
-        panel.className = 'glass-panel';
-        panel.innerHTML =
-          '<div class="panel-header"><h2 class="d-display region-name">' + r.region + '</h2></div>' +
-          '<div class="panel-content"><div class="verticals-chips">' +
-          r.verticals.map(function (v) { return '<div class="v-chip show">' + v + '</div>'; }).join('') +
-          '</div></div>';
-        section.appendChild(panel);
-      });
-    }
-
+    regionScreens.forEach(revealChips);
     sectionVisible = true;
     drawGlobe();
   }
 
-  function unpinVerticalsSection() {
-    if (pinEl) pinEl.style.height = 'auto';
-    var sticky = document.querySelector('.verticals-sticky');
-    if (sticky) {
-      sticky.style.position = 'relative';
-      sticky.style.height = 'auto';
-      sticky.style.overflow = 'visible';
-    }
-  }
-
+  // Topology or canvas unavailable: hide the globe and let the static region
+  // cards stand on their own as a plain stacked list.
   function initBentoFallback() {
-    document.body.classList.add('fallback-mode', 'bento-fallback-mode');
-    unpinVerticalsSection();
-
-    var section = document.getElementById('verticals');
-    if (!section) return;
-
-    section.innerHTML =
-      '<div class="verticals-bento-wrap">' +
-      '<div class="section-head" style="margin-bottom:32px;">' +
-      '<span class="d-eyebrow">Where we operate</span>' +
-      '<h2 class="d-display" style="text-transform:none;font-size:clamp(2rem,4vw,3rem);">Verticals &amp; geographies</h2>' +
-      '</div>' +
-      '<div class="bento-grid">' +
-      REGIONS.map(function (r, i) {
-        return '<div class="bento-card' + (i === 0 ? ' feat' : '') + '">' +
-          '<h3>' + r.region + '</h3>' +
-          '<div class="bento-chips">' +
-          r.verticals.map(function (v) { return '<span class="bento-chip">' + v + '</span>'; }).join('') +
-          '</div></div>';
-      }).join('') +
-      '</div></div>';
-
+    document.body.classList.add('fallback-mode', 'bento-fallback-mode', 'reduced-motion');
+    regionScreens.forEach(revealChips);
     if (canvas) canvas.style.display = 'none';
   }
 
@@ -564,14 +437,6 @@
     currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
 
-    // Perf guard only (not an opacity/fade choreography): skip rotation easing
-    // and redraw work while the pinned section is nowhere near the viewport.
-    if (pinEl && typeof IntersectionObserver !== 'undefined' && !isReduced) {
-      new IntersectionObserver(function (entries) {
-        sectionVisible = entries[0].isIntersecting;
-      }, { rootMargin: '20% 0px' }).observe(pinEl);
-    }
-
     loadTopology()
       .then(function () {
         topologyReady = true;
@@ -579,16 +444,10 @@
           initReducedMotion();
           return;
         }
-        renderPanel(0);
-        if (window.DracoScroll) {
-          window.DracoScroll.register(updateGlobe);
-        } else {
-          // Defensive fallback if the shared loop failed to load.
-          (function fallbackTick() {
-            updateGlobe();
-            requestAnimationFrame(fallbackTick);
-          })();
-        }
+        (function tick() {
+          updateGlobe();
+          requestAnimationFrame(tick);
+        })();
       })
       .catch(function (err) {
         console.error('[verticals-globe]', err);
@@ -604,6 +463,9 @@
       }, 150);
     });
   }
+
+  // Public API — assets/home-stage.js is the only consumer.
+  window.DracoGlobe = { setActiveRegion: setActiveRegion, setVisible: setVisible };
 
   if (typeof d3 === 'undefined' || typeof topojson === 'undefined') {
     initBentoFallback();

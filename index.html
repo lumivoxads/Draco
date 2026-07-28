@@ -35,20 +35,28 @@
    <link rel="stylesheet" href="assets/site.css">
 
    <style>
-      /* ---- home : static single-viewport hero, with a scroll-pinned vector globe ---- */
-      html{overflow-x:hidden;}
+      /* ---- home : one fixed video stage behind eight full-viewport snap screens ----
+         The video, the dimming scrim and the vector globe are a single fixed
+         instance each (.stage) that never scrolls. Only the .screen content moves.
+         See docs/superpowers/specs/2026-07-28-home-video-stage-design.md */
+      html{overflow-x:hidden;scroll-snap-type:y mandatory;}
       .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
 
-      /* hero — static, always fully visible, no scroll-driven reveal. Layout matches
-         the original design: copy right (Earth sits left), pull-quote lower-left. */
-      .home-hero{position:relative;min-height:100svh;overflow:hidden;background:#000;}
+      /* the fixed stage — never scrolls, never duplicated per section */
+      .stage{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000;}
+      .stage-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+      /* dims the video so it reads as ambient texture behind the vector globe */
+      .stage-scrim{position:absolute;inset:0;background:#03040a;opacity:.15;transition:opacity .6s ease;}
+      canvas#globe-canvas{position:absolute;inset:0;display:block;opacity:0;transition:opacity .5s ease;}
       /* top scrim so the nav stays legible over the bright planet */
-      .home-hero::before,.verticals-sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:5;pointer-events:none;
+      .stage::after{content:"";position:absolute;top:0;left:0;right:0;height:160px;pointer-events:none;
          background:linear-gradient(to bottom,rgba(3,4,6,.75),transparent);}
-      .home-hero .bg-image{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;}
-      .home-hero .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
-         background:radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
-      .home-hero .scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
+
+      main#main{position:relative;z-index:2;}
+      .screen{position:relative;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;}
+
+      /* hero — directional wash so the copy stays legible over the moving planet */
+      .screen-hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:
          linear-gradient(270deg, rgba(3,4,6,.92) 0%, rgba(3,4,6,.68) 40%, transparent 72%);}
 
       /* copy column starts at 46% — the longest headline line ("Enterprise Loyalty",
@@ -77,23 +85,23 @@
       .scroll-hint i{animation:draco-pulse 2s ease-in-out infinite;}
       @keyframes draco-pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-      /* verticals — the one section that keeps a scroll-driven animation:
-         pinned while the vector globe rotates through each region beat
-         (assets/verticals-globe.js). Everything else on this page is static. */
-      .verticals-pin{position:relative;height:700vh;background:#000;}
-      .verticals-sticky{position:sticky;top:0;height:100svh;overflow:hidden;}
-      .verticals-sticky .bg-image{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;}
-      .globe-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(0,0,0,.72);}
-      canvas#globe-canvas{position:absolute;inset:0;z-index:2;display:block;}
-      .verticals-sticky .d-section#verticals{position:relative;z-index:3;width:100%;height:100%;margin:0;padding:0;display:flex;align-items:center;justify-content:flex-end;}
+      /* region screens — the card is laid out by assets/verticals-globe.js
+         (positionPanel) so it always clears the globe's disc */
+      .screen-region .screen-inner{position:relative;z-index:3;width:100%;height:100%;
+         display:flex;align-items:center;justify-content:flex-end;}
+      .screen-region .glass-panel{opacity:0;transform:translateY(12px);
+         transition:opacity .45s ease, transform .45s ease;}
+      .screen-region.is-active .glass-panel{opacity:1;transform:none;}
 
+      /* reduced motion — no snapping, no video, everything stacked and visible */
       @media (prefers-reduced-motion:reduce){
-         html{scroll-behavior:auto;}
-         /* the vector globe is the one section allowed to animate on scroll —
-            respect the OS preference and un-pin it like everything else */
-         .verticals-pin{height:auto!important;}
-         .verticals-sticky{position:relative!important;height:auto!important;overflow:visible!important;}
+         html{scroll-behavior:auto;scroll-snap-type:none;}
+         .screen{height:auto;scroll-snap-align:none;}
+         .stage-video{display:none;}
+         .stage-scrim{opacity:.55;}
+         .screen-region .glass-panel{opacity:1;transform:none;}
       }
+      .reduced-motion .screen-region .screen-inner{height:auto;padding:80px var(--d-pad)!important;}
 
       /* Glass Panel for Verticals Globe */
       .glass-panel {
@@ -288,11 +296,11 @@
       @media (max-width:768px){
          /* stacked layout puts the copy over the bright limb of the planet rather
             than the dark corners, so add a flat wash under the directional fades */
-         .home-hero .scrim{background:linear-gradient(to top, rgba(3,4,6,.88) 0%, transparent 55%),linear-gradient(to bottom, rgba(3,4,6,.82), transparent 62%),rgba(3,4,6,.45);}
+         .screen-hero::before{background:linear-gradient(to top, rgba(3,4,6,.88) 0%, transparent 55%),linear-gradient(to bottom, rgba(3,4,6,.82), transparent 62%),rgba(3,4,6,.45);}
          /* On a narrow, tall viewport the top-anchored headline and the
             bottom-anchored quote collide, so drop both out of absolute
             positioning and let them stack in normal flow instead. */
-         .home-hero{display:flex;flex-direction:column;justify-content:flex-start;padding:112px 0 40px;}
+         .screen-hero{display:flex;flex-direction:column;justify-content:flex-start;padding:112px 0 40px;}
          .hero-overlay{position:relative;inset:auto;align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
          .hero-copy .d-eyebrow{flex-direction:row;}
          .hero-copy h1{font-size:clamp(1.2rem,6.2vw,2.6rem);}
@@ -381,13 +389,20 @@
       <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
    </header>
 
-   <main id="main">
-      <!-- hero — static, always fully visible: copy right, pull-quote lower-left -->
-      <section class="home-hero">
-         <img class="bg-image" src="assets/earth-frames/dark/frame_0120.jpg" alt="" aria-hidden="true">
-         <div class="grade" aria-hidden="true"></div>
-         <div class="scrim" aria-hidden="true"></div>
+   <!-- fixed stage: the video, the dimming scrim and the vector globe. One
+        instance for the whole page — it never scrolls and never pauses. -->
+   <div class="stage" aria-hidden="true">
+      <video class="stage-video" id="stage-video" autoplay muted loop playsinline preload="auto"
+             poster="assets/video/earth-poster.jpg">
+         <source src="assets/video/earth-loop.mp4" type="video/mp4">
+      </video>
+      <div class="stage-scrim" id="stage-scrim"></div>
+      <canvas id="globe-canvas"></canvas>
+   </div>
 
+   <main id="main">
+      <!-- screen 0 — hero: copy right, pull-quote lower-left -->
+      <section class="screen screen-hero" data-screen="0">
          <div class="hero-overlay">
             <div class="hero-copy">
                <span class="d-eyebrow draco-anim d1">Enterprise Loyalty Partner</span>
@@ -412,27 +427,99 @@
          <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
       </section>
 
-      <!-- verticals — the one section that keeps a scroll-driven animation -->
-      <div class="verticals-pin">
-         <div class="verticals-sticky">
-            <img class="bg-image" src="assets/earth-frames/dark/frame_0120.jpg" alt="" aria-hidden="true">
-            <div class="globe-scrim" id="globe-scrim" aria-hidden="true"></div>
-            <canvas id="globe-canvas" aria-hidden="true"></canvas>
-
-            <section class="d-section" id="verticals">
-               <div class="glass-panel" id="verticals-panel" data-lenis-prevent>
-                  <div class="panel-header">
-                     <h2 class="d-display region-name" id="region-name">Region Name</h2>
-                  </div>
-                  <div class="panel-content">
-                     <div class="verticals-chips" id="verticals-chips">
-                        <!-- Chips will be injected here -->
-                     </div>
+      <!-- screens 1–7 — one per region. Card markup is static so every region
+           is present without JavaScript; assets/home-stage.js only toggles
+           .is-active and tells the globe which anchor to turn to. -->
+      <section class="screen screen-region" data-screen="1" data-region="0">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Africa</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">BFSI</div><div class="v-chip">Fuel</div>
                   </div>
                </div>
-            </section>
+            </div>
          </div>
-      </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="2" data-region="1">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Asia</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Airport</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">QSR</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="3" data-region="2">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Central America</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">QSR</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="4" data-region="3">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Central Asia</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="5" data-region="4">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Europe</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail / CPG</div><div class="v-chip">Telco</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="6" data-region="5">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Middle East</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div><div class="v-chip">QSR</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="7" data-region="6">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">North America</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
    </main>
 
    <!-- mobile menu -->
@@ -443,13 +530,14 @@
       <a href="contact.html">Contact</a>
    </div>
 
-   <script src="assets/vendor/lenis.min.js"></script>
-   <script src="assets/scroll-loop.js"></script>
+   <!-- Lenis and scroll-loop.js are deliberately not loaded here: inertial
+        smoothing fights CSS scroll snapping. about.html and contact.html keep them. -->
    <script src="assets/site.js"></script>
    <script src="assets/vendor/d3-array.min.js"></script>
    <script src="assets/vendor/d3-geo.min.js"></script>
    <script src="assets/vendor/topojson-client.min.js"></script>
    <script src="assets/verticals-globe.js"></script>
+   <script src="assets/home-stage.js"></script>
    <script src="assets/vertical-detail-preview.js"></script>
 </body>
 </html>

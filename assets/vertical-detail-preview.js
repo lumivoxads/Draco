@@ -37,22 +37,31 @@
       }
    };
 
-   var panel = document.getElementById('verticals-panel');
-   var chipsContainer = document.getElementById('verticals-chips');
-   var regionNameEl = document.getElementById('region-name');
-   if (!panel || !chipsContainer) return;
-
-   var detailEl = document.createElement('div');
-   detailEl.className = 'vertical-detail';
-   detailEl.setAttribute('aria-live', 'polite');
-   chipsContainer.parentNode.insertBefore(detailEl, chipsContainer.nextSibling);
+   // Every region screen carries its own static card, so the detail panel is
+   // created lazily inside whichever card the clicked chip belongs to.
+   var root = document.getElementById('main');
+   if (!root) return;
 
    var activeChip = null;
+   var detailEl = null;
+
+   function detailFor(chip) {
+      var chipsContainer = chip.closest('.verticals-chips');
+      if (!chipsContainer) return null;
+      var existing = chipsContainer.parentNode.querySelector('.vertical-detail');
+      if (existing) return existing;
+      var el = document.createElement('div');
+      el.className = 'vertical-detail';
+      el.setAttribute('aria-live', 'polite');
+      chipsContainer.parentNode.insertBefore(el, chipsContainer.nextSibling);
+      return el;
+   }
 
    function closeDetail() {
-      detailEl.classList.remove('open');
+      if (detailEl) detailEl.classList.remove('open');
       if (activeChip) activeChip.classList.remove('active');
       activeChip = null;
+      detailEl = null;
    }
 
    function renderDetail(name) {
@@ -67,7 +76,12 @@
       detailEl.innerHTML = html;
    }
 
-   chipsContainer.addEventListener('click', function (e) {
+   root.addEventListener('click', function (e) {
+      if (e.target.closest('.vd-close')) {
+         closeDetail();
+         return;
+      }
+
       var chip = e.target.closest('.v-chip');
       if (!chip) return;
 
@@ -76,26 +90,14 @@
          return;
       }
 
-      if (activeChip) activeChip.classList.remove('active');
+      var target = detailFor(chip);
+      if (!target) return;
+
+      closeDetail();
       chip.classList.add('active');
       activeChip = chip;
+      detailEl = target;
       renderDetail(chip.textContent.trim());
       detailEl.classList.add('open');
    });
-
-   detailEl.addEventListener('click', function (e) {
-      if (e.target.closest('.vd-close')) closeDetail();
-   });
-
-   // Auto-close when the active region changes, so the panel never shows a
-   // vertical's detail against the wrong region's chip set.
-   if (regionNameEl && typeof MutationObserver !== 'undefined') {
-      var lastRegion = regionNameEl.textContent;
-      new MutationObserver(function () {
-         if (regionNameEl.textContent !== lastRegion) {
-            lastRegion = regionNameEl.textContent;
-            closeDetail();
-         }
-      }).observe(regionNameEl, { childList: true, characterData: true, subtree: true });
-   }
 })();
