@@ -35,56 +35,65 @@
    <link rel="stylesheet" href="assets/site.css">
 
    <style>
-      /* ---- home : scroll-scrubbed Earth hero (on-dark) ---- */
-      /* overflow-x guard lives on html, not body: body{overflow-x:hidden} breaks
-         position:sticky on mobile Safari/Chrome (dynamic toolbar resize conflicts
-         with an overflow-clipped sticky containing block) */
+      /* ---- home : static single-viewport hero, with a scroll-pinned vector globe ---- */
       html{overflow-x:hidden;}
       .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
 
-      .stage{position:relative;height:1100vh;}                 /* rebalanced Jul 2026 — see assets/scroll-loop.js DracoPacing */
-      .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#000;}
+      /* hero — static, always fully visible, no scroll-driven reveal. Layout matches
+         the original design: copy right (Earth sits left), pull-quote lower-left. */
+      .home-hero{position:relative;min-height:100svh;overflow:hidden;background:#000;}
       /* top scrim so the nav stays legible over the bright planet */
-      .sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:3;pointer-events:none;
+      .home-hero::before,.verticals-sticky::before{content:"";position:absolute;top:0;left:0;right:0;height:160px;z-index:5;pointer-events:none;
          background:linear-gradient(to bottom,rgba(3,4,6,.75),transparent);}
-
-      canvas#earth{position:absolute;inset:0;z-index:1;display:block;}
-      .globe-scrim{position:absolute;inset:0;z-index:3;pointer-events:none;
-         background:rgba(0,0,0,0.72);opacity:0;transition:opacity 0.5s ease;}
-      canvas#globe-canvas{position:absolute;inset:0;z-index:4;display:block;opacity:0;pointer-events:none;}
-      .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
+      .home-hero .bg-image{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;}
+      .home-hero .grade{position:absolute;inset:0;z-index:1;pointer-events:none;
          background:radial-gradient(70% 60% at 80% 20%, rgba(201,169,106,.10), transparent 60%);}
-      /* right scrim — Earth sits left; copy lives on the clear right side */
-      .scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
-         linear-gradient(270deg, rgba(3,4,6,.82) 0%, rgba(3,4,6,.45) 34%, transparent 62%);}
+      .home-hero .scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:
+         linear-gradient(270deg, rgba(3,4,6,.92) 0%, rgba(3,4,6,.68) 40%, transparent 72%);}
 
-      .overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding:0 var(--d-pad);padding-left:max(var(--d-pad),52%);pointer-events:none;}
-      .hero-copy{max-width:52ch;will-change:opacity,transform;pointer-events:auto;}
+      /* copy column starts at 46% — the longest headline line ("Enterprise Loyalty",
+         ~10.5em wide) needs more room than the old two-word lines did, and the Earth
+         still clears it on the left */
+      .hero-overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
+         align-items:flex-end;text-align:right;padding:0 var(--d-pad);padding-left:max(var(--d-pad),46%);}
       .hero-copy .d-eyebrow{margin-bottom:22px;flex-direction:row-reverse;}
-      .hero-copy h1{font-size:clamp(2.4rem,6.4vw,6rem);}
-      .hero-copy .note{display:block;font-family:var(--d-ff-body);font-weight:400;text-transform:none;font-size:clamp(.82rem,1.2vw,1rem);letter-spacing:0;line-height:1.4;color:var(--d-muted);max-width:30ch;margin:12px 0 4px auto;}
-      .hero-copy .lead{max-width:44ch;margin:24px 0 0 auto;font-size:clamp(.98rem,1.3vw,1.12rem);line-height:1.55;color:var(--d-muted);}
+      /* three-beat headline: two heavy display lines with a lighter, mixed-case
+         connector between them, so "& Customer Experience" reads as an extension
+         of the offering rather than a third competing shout. The vw term is tuned
+         so line 1 stays unbroken across the whole desktop range. */
+      .hero-copy h1{font-size:clamp(1.25rem,3.3vw,4.4rem);}
+      .hero-copy h1 .line{display:block;}
 
       /* pull-quote in the lower-left space vacated by the right-shifted copy */
-      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;max-width:min(42ch,42%);margin:0;padding:0;border:0;text-align:left;will-change:opacity,transform;pointer-events:none;}
+      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;z-index:4;max-width:min(42ch,42%);margin:0;padding:0;border:0;text-align:left;}
+      .hero-quote blockquote{margin:0;padding:0;border:0;}
       .hero-quote p{margin:0;font-family:var(--d-ff-body);font-style:italic;font-size:clamp(.92rem,1.15vw,1.05rem);line-height:1.55;color:var(--d-muted);}
       .hero-quote cite{display:block;margin-top:10px;font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-accent);}
+      .hero-quote .cta-line{font-size:clamp(1.15rem,1.8vw,1.45rem);color:var(--d-fg);margin:30px 0 0;line-height:1.4;}
+      .hero-quote .cta-line i{color:var(--d-accent);margin-left:10px;}
 
-      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;transition:opacity .25s;}
+      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;
+         text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;}
       .scroll-hint i{animation:draco-pulse 2s ease-in-out infinite;}
       @keyframes draco-pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-      .step-1 { opacity: 1; pointer-events: auto; }
-      .step-2, .step-3 { opacity: 0; pointer-events: none; }
-      @media (prefers-reduced-motion:reduce){
-         .stage{height:auto!important;}
-         .sticky{position:relative!important;height:auto!important;overflow:visible!important;background:#000;}
-         canvas#earth, .grade, .scrim { position: fixed; inset: 0; z-index: 0; }
-         canvas#earth { z-index: -1; }
-         .overlay{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;pointer-events:auto!important;min-height:100vh; z-index: 4; justify-content: center;}
-         .scroll-hint{display:none;}
-      }
+      /* verticals — the one section that keeps a scroll-driven animation:
+         pinned while the vector globe rotates through each region beat
+         (assets/verticals-globe.js). Everything else on this page is static. */
+      .verticals-pin{position:relative;height:700vh;background:#000;}
+      .verticals-sticky{position:sticky;top:0;height:100svh;overflow:hidden;}
+      .verticals-sticky .bg-image{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;}
+      .globe-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(0,0,0,.72);}
+      canvas#globe-canvas{position:absolute;inset:0;z-index:2;display:block;}
+      .verticals-sticky .d-section#verticals{position:relative;z-index:3;width:100%;height:100%;margin:0;padding:0;display:flex;align-items:center;justify-content:flex-end;}
 
+      @media (prefers-reduced-motion:reduce){
+         html{scroll-behavior:auto;}
+         /* the vector globe is the one section allowed to animate on scroll —
+            respect the OS preference and un-pin it like everything else */
+         .verticals-pin{height:auto!important;}
+         .verticals-sticky{position:relative!important;height:auto!important;overflow:visible!important;}
+      }
 
       /* Glass Panel for Verticals Globe */
       .glass-panel {
@@ -98,7 +107,10 @@
          padding: 32px;
          pointer-events: auto;
          transition: opacity 0.4s ease;
-         overflow-y: auto; /* mobile: assets/verticals-globe.js caps max-height to fit below the globe */
+         /* the click-to-expand detail can grow taller than the viewport —
+            scroll inside the panel instead of overflowing into the fixed header */
+         max-height: 82vh;
+         overflow-y: auto;
       }
       .panel-header {
          border-bottom: 1px solid var(--d-accent);
@@ -125,16 +137,91 @@
          background: transparent;
          opacity: 0;
          transform: translateY(10px);
-         transition: opacity 0.4s ease, transform 0.4s ease;
+         transition: opacity 0.4s ease, transform 0.4s ease, background 0.25s ease, border-color 0.25s ease;
+         cursor: pointer;
       }
       .v-chip.show {
          opacity: 1;
          transform: translateY(0);
       }
+      .v-chip:hover, .v-chip.active {
+         background: rgba(201, 169, 106, 0.14);
+         border-color: var(--d-accent);
+      }
+
+      /* click-to-expand vertical detail (assets/vertical-detail-preview.js) */
+      .vertical-detail {
+         margin-top: 20px;
+         padding-top: 20px;
+         border-top: 1px solid var(--d-line);
+         max-height: 0;
+         overflow: hidden;
+         opacity: 0;
+         transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease, padding-top 0.4s ease;
+      }
+      .vertical-detail.open {
+         margin-top: 20px;
+         padding-top: 20px;
+         max-height: 600px; /* comfortably above real content; outer .glass-panel scrolls, not this */
+         opacity: 1;
+      }
+      .vertical-detail .vd-close {
+         float: right;
+         background: none;
+         border: 0;
+         color: var(--d-muted);
+         font-size: 1.1rem;
+         cursor: pointer;
+         line-height: 1;
+         padding: 0 0 8px 8px;
+      }
+      .vertical-detail .vd-close:hover { color: var(--d-accent); }
+      .vertical-detail h3 {
+         margin: 0 0 12px;
+         font-size: 1.3rem;
+         color: var(--d-accent);
+         padding-right: 28px;
+      }
+      .vertical-detail p {
+         margin: 0 0 12px;
+         font-size: 0.92rem;
+         line-height: 1.6;
+         color: var(--d-muted);
+      }
+      .vertical-detail ul {
+         margin: 0 0 16px;
+         padding-left: 18px;
+      }
+      .vertical-detail li {
+         font-size: 0.88rem;
+         line-height: 1.55;
+         color: var(--d-muted);
+         margin-bottom: 8px;
+      }
+      .vertical-detail li strong { color: var(--d-fg); }
+      .vertical-detail .vd-cta {
+         display: inline-flex;
+         align-items: center;
+         gap: 8px;
+         margin-top: 4px;
+         padding: 10px 20px;
+         border-radius: 100px;
+         background: var(--d-accent);
+         color: #06070a;
+         font-size: 0.88rem;
+         font-weight: 600;
+         text-decoration: none;
+         transition: opacity 0.2s ease;
+      }
+      .vertical-detail .vd-cta:hover { opacity: 0.85; }
+
+      @media (max-width: 600px) {
+         .glass-panel { max-height: 74vh; }
+      }
 
       /* Stack multiple panels in reduced-motion fallback */
-      .reduced-globe-mode .step-3,
-      .fallback-mode .step-3 {
+      .reduced-globe-mode .d-section#verticals,
+      .fallback-mode .d-section#verticals {
          pointer-events: auto;
          opacity: 1 !important;
          transform: none !important;
@@ -196,29 +283,25 @@
          .bento-fallback-mode .bento-card.feat { grid-column: span 1; grid-row: span 1; }
       }
 
-      @media (max-width:600px){
-         .scrim{background:linear-gradient(to top, rgba(3,4,6,.72) 0%, transparent 42%),linear-gradient(to bottom, rgba(3,4,6,.55), transparent 28%);}
-         /* Steps 1+2 are combined into one view on mobile too (assets/earth-scroll.js
-            fades them in/out together) — anchor the headline to the top and let the
-            quote take the full width instead of a 42%-wide column, or the two blocks
-            collide in the vertical middle of a narrow, tall viewport. */
-         .overlay.step-1{align-items:flex-start;text-align:left;padding:0 var(--d-pad);justify-content:flex-start;padding-top:112px;}
-         .overlay.step-2{align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
+      /* 768px, matching the mobile threshold assets/verticals-globe.js already uses.
+         Below this the 46% copy column is too narrow to hold the headline lines. */
+      @media (max-width:768px){
+         /* stacked layout puts the copy over the bright limb of the planet rather
+            than the dark corners, so add a flat wash under the directional fades */
+         .home-hero .scrim{background:linear-gradient(to top, rgba(3,4,6,.88) 0%, transparent 55%),linear-gradient(to bottom, rgba(3,4,6,.82), transparent 62%),rgba(3,4,6,.45);}
+         /* On a narrow, tall viewport the top-anchored headline and the
+            bottom-anchored quote collide, so drop both out of absolute
+            positioning and let them stack in normal flow instead. */
+         .home-hero{display:flex;flex-direction:column;justify-content:flex-start;padding:112px 0 40px;}
+         .hero-overlay{position:relative;inset:auto;align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
          .hero-copy .d-eyebrow{flex-direction:row;}
-         .hero-copy .note,.hero-copy .lead{margin-left:0;margin-right:0;}
-         .hero-copy h1{font-size:clamp(2rem,9vw,3rem);}
+         .hero-copy h1{font-size:clamp(1.2rem,6.2vw,2.6rem);}
          /* Reserve room on the right for the fixed .contact-rail (site.css: right:16px,
-            48px/44px buttons ≈ 70px footprint) so the now-wider quote text never
-            wraps under those icons. */
-         .hero-quote{max-width:calc(100% - 2*var(--d-pad) - 76px);bottom:28px;}
-         .scroll-hint{display:none;} /* would collide with the quote's last line at this bottom offset; the quote's own arrow already signals to keep scrolling */
+            44px buttons ≈ 70px footprint) so the quote never wraps under those icons. */
+         .hero-quote{position:relative;left:auto;bottom:auto;margin:40px 0 0;padding:0 var(--d-pad);
+            max-width:calc(100% - var(--d-pad) - 76px);}
+         .scroll-hint{display:none;} /* would collide with the quote's last line; the quote's own arrow already signals to keep scrolling */
          .glass-panel { max-width: none; }
-         .step-3 .d-section#verticals {
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 var(--d-pad) 100px;
-         }
          .bento-fallback-mode .bento-grid { grid-template-columns: 1fr; }
       }
 
@@ -298,43 +381,46 @@
       <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
    </header>
 
-   <!-- scroll-scrubbed hero -->
-   <main class="stage" id="main">
-      <div class="sticky">
-         <canvas id="earth" data-frames="240" data-path="assets/earth-frames/dark/" data-ext="jpg" data-fps="24" aria-hidden="true"></canvas>
+   <main id="main">
+      <!-- hero — static, always fully visible: copy right, pull-quote lower-left -->
+      <section class="home-hero">
+         <img class="bg-image" src="assets/earth-frames/dark/frame_0120.jpg" alt="" aria-hidden="true">
          <div class="grade" aria-hidden="true"></div>
          <div class="scrim" aria-hidden="true"></div>
-         <div class="globe-scrim" id="globe-scrim" aria-hidden="true"></div>
-         <canvas id="globe-canvas" aria-hidden="true"></canvas>
+
+         <div class="hero-overlay">
+            <div class="hero-copy">
+               <span class="d-eyebrow draco-anim d1">Enterprise Loyalty Partner</span>
+               <h1 class="d-display draco-anim d2">
+                  <span class="line">Enterprise Loyalty</span>
+                  <span class="line">&amp; Customer Experience</span>
+                  <span class="line accent">Engineered.</span>
+               </h1>
+            </div>
+         </div>
+
+         <div class="hero-quote draco-anim d3">
+            <blockquote>
+               <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
+               <cite>— Rumi</cite>
+            </blockquote>
+            <p class="cta-line">
+               Connect with us and speak to someone who has not been home for a very long time. <i class="fa-regular fa-arrow-down-right"></i>
+            </p>
+         </div>
 
          <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
+      </section>
 
-         <!-- Step 1: Headline -->
-         <div class="overlay step-1">
-            <div class="hero-copy">
-               <span class="d-eyebrow">Enterprise Loyalty Partner</span>
-               <h1 class="d-display">Enterprise<br>Loyalty,<span class="note">For the world's most customer-obsessed brands.</span><span class="accent">Engineered.</span></h1>
-               <p class="lead">Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.</p>
-            </div>
-         </div>
+      <!-- verticals — the one section that keeps a scroll-driven animation -->
+      <div class="verticals-pin">
+         <div class="verticals-sticky">
+            <img class="bg-image" src="assets/earth-frames/dark/frame_0120.jpg" alt="" aria-hidden="true">
+            <div class="globe-scrim" id="globe-scrim" aria-hidden="true"></div>
+            <canvas id="globe-canvas" aria-hidden="true"></canvas>
 
-         <!-- Step 2: Quote CTA -->
-         <div class="overlay step-2">
-            <div class="hero-quote">
-               <blockquote style="margin: 0; padding: 0; border: 0;">
-                  <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
-                  <cite>— Rumi</cite>
-               </blockquote>
-               <p class="cta-line" style="font-size: clamp(1.15rem, 1.8vw, 1.45rem); color: var(--d-fg); margin: 30px 0 0; line-height: 1.4;">
-                  Connect with us and speak to someone who has not been home for a very long time. <i class="fa-regular fa-arrow-down-right" style="color: var(--d-accent); margin-left: 10px;"></i>
-               </p>
-            </div>
-         </div>
-
-         <!-- Step 3: Verticals -->
-         <div class="overlay step-3" style="align-items: flex-start; text-align: left; padding: 0; pointer-events: none;">
-            <section class="d-section" id="verticals" style="width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: var(--d-pad);">
-               <div class="glass-panel" id="verticals-panel">
+            <section class="d-section" id="verticals">
+               <div class="glass-panel" id="verticals-panel" data-lenis-prevent>
                   <div class="panel-header">
                      <h2 class="d-display region-name" id="region-name">Region Name</h2>
                   </div>
@@ -349,8 +435,6 @@
       </div>
    </main>
 
-
-
    <!-- mobile menu -->
    <div class="draco-mobile" id="dracoMobile">
       <button class="close" id="dracoClose" aria-label="Close menu"><i class="fa-regular fa-xmark"></i></button>
@@ -362,10 +446,10 @@
    <script src="assets/vendor/lenis.min.js"></script>
    <script src="assets/scroll-loop.js"></script>
    <script src="assets/site.js"></script>
-   <script src="assets/earth-scroll.js"></script>
    <script src="assets/vendor/d3-array.min.js"></script>
    <script src="assets/vendor/d3-geo.min.js"></script>
    <script src="assets/vendor/topojson-client.min.js"></script>
    <script src="assets/verticals-globe.js"></script>
+   <script src="assets/vertical-detail-preview.js"></script>
 </body>
 </html>

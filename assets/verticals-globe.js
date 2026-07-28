@@ -63,14 +63,9 @@
   };
 
   var canvas = document.getElementById('globe-canvas');
-  var scrim = document.getElementById('globe-scrim');
   var verticalsSection = document.getElementById('verticals');
-  var step3El = document.querySelector('.step-3');
+  var pinEl = document.querySelector('.verticals-pin');
 
-  // Shared thresholds from assets/scroll-loop.js; fallback matches its defaults
-  // in case that script fails to load. Region-beat rotation begins exactly at
-  // step3FadeEnd, i.e. once the globe/panel/scrim are already fully opaque.
-  var pacing = (window.DracoScroll && window.DracoScroll.pacing) || { step3FadeEnd: 0.48 };
   var isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!canvas) return;
 
@@ -93,7 +88,7 @@
   var activeRegionIndex = -1;
   var allLit = false;
   var pulsePhase = 0;
-  var step3Visible = false;
+  var sectionVisible = false;
   var topologyReady = false;
   var lastEarth = null;
 
@@ -137,14 +132,32 @@
     currentRotation[2] += (targetRotation[2] - currentRotation[2]) * 0.08;
   }
 
+  // Earth's disc in the static background frame (assets/earth-frames/dark/
+  // frame_0120.jpg, 1280×720), as fractions of frame width/height — calibrated
+  // visually Jul 2026, confirmed on all four limb edges. The frame is rendered
+  // as a plain centered object-fit:cover <img> now (index.html .bg-image), so
+  // this reproduces that same centered cover-fit math directly instead of
+  // reading it from the old scroll-scrubbed canvas (assets/earth-scroll.js).
+  var EARTH_FRAME_W = 1280;
+  var EARTH_FRAME_H = 720;
+  var EARTH_CX_FRAC = 0.3360;
+  var EARTH_CY_FRAC = 0.4460;
+  var EARTH_R_FRAC = 0.1930;
+
+  function getEarthCoverFit(cw, ch) {
+    var ir = EARTH_FRAME_W / EARTH_FRAME_H, cr = cw / ch, w, h;
+    if (ir > cr) { h = ch; w = ch * ir; } else { w = cw; h = cw / ir; }
+    return { w: w, h: h, ox: (cw - w) / 2, oy: (ch - h) / 2 };
+  }
+
   function getEarthLayout() {
-    if (window.DracoEarth && window.DracoEarth.earthOnScreen) {
-      return window.DracoEarth.earthOnScreen();
-    }
-    // Crude fallback only — reached if earth-scroll.js failed to load, in which
-    // case there is no photoreal Earth to register against anyway. Real values
-    // come from DracoEarth.earthOnScreen(), which applies the cover-fit.
-    return { cx: innerWidth * 0.336, cy: innerHeight * 0.446, r: innerWidth * 0.193 };
+    var fit = getEarthCoverFit(innerWidth, innerHeight);
+    var s = fit.w / EARTH_FRAME_W;
+    return {
+      cx: fit.ox + EARTH_CX_FRAC * EARTH_FRAME_W * s,
+      cy: fit.oy + EARTH_CY_FRAC * EARTH_FRAME_H * s,
+      r: EARTH_R_FRAC * EARTH_FRAME_W * s
+    };
   }
 
   function resize() {
@@ -222,7 +235,7 @@
   }
 
   function drawGlobe() {
-    if (!topologyReady || !step3Visible) {
+    if (!topologyReady || !sectionVisible) {
       ctx.clearRect(0, 0, innerWidth, innerHeight);
       return;
     }
@@ -363,9 +376,16 @@
     }, 50);
   }
 
-  function getScrollProgress(pageProgress) {
-    var start = pacing.step3FadeEnd;
-    return clamp((pageProgress - start) / (1 - start), 0, 1);
+  function getSectionProgress() {
+    if (window.DracoScroll && window.DracoScroll.sectionProgress) {
+      return window.DracoScroll.sectionProgress(pinEl);
+    }
+    // Defensive fallback if the shared loop failed to load.
+    if (!pinEl) return 0;
+    var maxScroll = pinEl.offsetHeight - innerHeight;
+    if (maxScroll <= 0) return 0;
+    var rect = pinEl.getBoundingClientRect();
+    return clamp(-rect.top / maxScroll, 0, 1);
   }
 
   function mapSnappedBeats(raw) {
@@ -383,18 +403,10 @@
     return Math.min(idx + t, totalBeats);
   }
 
-  function updateFromScroll(pageProgress) {
-    var opacity = step3El ? parseFloat(step3El.style.opacity || '0') : 0;
-    step3Visible = opacity > 0.05;
+  function updateFromScroll() {
+    if (!sectionVisible || isReduced) return;
 
-    if (scrim) {
-      scrim.style.opacity = step3Visible ? String(Math.min(1, opacity * 1.2)) : '0';
-    }
-    canvas.style.opacity = step3Visible ? String(Math.min(1, opacity * 1.2)) : '0';
-
-    if (!step3Visible || isReduced) return;
-
-    var prog = getScrollProgress(pageProgress);
+    var prog = getSectionProgress();
     var beatFloat = mapSnappedBeats(prog);
     var beatIndex = Math.floor(beatFloat);
     var beatFrac = beatFloat - beatIndex;
@@ -423,13 +435,16 @@
 
   // Shared-loop participant (assets/scroll-loop.js drives the one rAF for the
   // whole page). Registered unconditionally; no-ops until topology has loaded.
-  function updateGlobe(time, progress) {
+  // Local scroll progress (getSectionProgress) is read fresh each frame rather
+  // than taking a page-wide progress argument — this is the only section left
+  // that animates on scroll, so it paces itself off its own .verticals-pin.
+  function updateGlobe() {
     if (!topologyReady) return;
     if (!isReduced) {
       pulsePhase += 0.08;
       easeRotation();
     }
-    updateFromScroll(progress);
+    updateFromScroll();
     drawGlobe();
   }
 
@@ -461,13 +476,13 @@
     currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
 
-    var step3Section = document.querySelector('.step-3 .d-section');
-    if (step3Section) {
-      step3Section.innerHTML = '';
-      step3Section.style.flexDirection = 'column';
-      step3Section.style.alignItems = 'center';
-      step3Section.style.gap = '24px';
-      step3Section.style.padding = '80px var(--d-pad) 120px';
+    var section = document.getElementById('verticals');
+    if (section) {
+      section.innerHTML = '';
+      section.style.flexDirection = 'column';
+      section.style.alignItems = 'center';
+      section.style.gap = '24px';
+      section.style.padding = '80px var(--d-pad) 120px';
 
       REGIONS.forEach(function (r) {
         var panel = document.createElement('div');
@@ -477,30 +492,32 @@
           '<div class="panel-content"><div class="verticals-chips">' +
           r.verticals.map(function (v) { return '<div class="v-chip show">' + v + '</div>'; }).join('') +
           '</div></div>';
-        step3Section.appendChild(panel);
+        section.appendChild(panel);
       });
     }
 
-    if (scrim) scrim.style.opacity = '1';
-    canvas.style.opacity = '1';
-    step3Visible = true;
+    sectionVisible = true;
     drawGlobe();
+  }
+
+  function unpinVerticalsSection() {
+    if (pinEl) pinEl.style.height = 'auto';
+    var sticky = document.querySelector('.verticals-sticky');
+    if (sticky) {
+      sticky.style.position = 'relative';
+      sticky.style.height = 'auto';
+      sticky.style.overflow = 'visible';
+    }
   }
 
   function initBentoFallback() {
     document.body.classList.add('fallback-mode', 'bento-fallback-mode');
-    if (scrim) scrim.style.opacity = '1';
+    unpinVerticalsSection();
 
-    var step3 = document.querySelector('.step-3');
-    if (step3) {
-      step3.style.opacity = '1';
-      step3.style.pointerEvents = 'auto';
-    }
+    var section = document.getElementById('verticals');
+    if (!section) return;
 
-    var step3Section = document.querySelector('.step-3 .d-section');
-    if (!step3Section) return;
-
-    step3Section.innerHTML =
+    section.innerHTML =
       '<div class="verticals-bento-wrap">' +
       '<div class="section-head" style="margin-bottom:32px;">' +
       '<span class="d-eyebrow">Where we operate</span>' +
@@ -547,6 +564,14 @@
     currentRotation = anchorToRotation(REGIONS[0].anchor);
     targetRotation = currentRotation.slice();
 
+    // Perf guard only (not an opacity/fade choreography): skip rotation easing
+    // and redraw work while the pinned section is nowhere near the viewport.
+    if (pinEl && typeof IntersectionObserver !== 'undefined' && !isReduced) {
+      new IntersectionObserver(function (entries) {
+        sectionVisible = entries[0].isIntersecting;
+      }, { rootMargin: '20% 0px' }).observe(pinEl);
+    }
+
     loadTopology()
       .then(function () {
         topologyReady = true;
@@ -559,10 +584,10 @@
           window.DracoScroll.register(updateGlobe);
         } else {
           // Defensive fallback if the shared loop failed to load.
-          (function fallbackTick(t) {
-            updateGlobe(t, 0);
+          (function fallbackTick() {
+            updateGlobe();
             requestAnimationFrame(fallbackTick);
-          })(0);
+          })();
         }
       })
       .catch(function (err) {

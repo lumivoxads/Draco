@@ -1,5 +1,4 @@
-/* PREVIEW ONLY — click-to-expand vertical detail panel.
-   Lives on preview-vertical-detail.html; not wired into the shipped site.
+/* Click-to-expand vertical detail panel.
    Only "Airline" has real client copy — every other vertical shows a
    placeholder so every chip is clickable while real copy is pending. */
 (function () {
