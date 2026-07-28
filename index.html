@@ -65,12 +65,15 @@
       .hero-overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
          align-items:flex-end;text-align:right;padding:0 var(--d-pad);padding-left:max(var(--d-pad),46%);}
       .hero-copy .d-eyebrow{margin-bottom:22px;flex-direction:row-reverse;}
-      /* three-beat headline: two heavy display lines with a lighter, mixed-case
-         connector between them, so "& Customer Experience" reads as an extension
-         of the offering rather than a third competing shout. The vw term is tuned
-         so line 1 stays unbroken across the whole desktop range. */
-      .hero-copy h1{font-size:clamp(1.25rem,3.3vw,4.4rem);}
+      /* two-line headline: the offering, then the payoff. The vw term is tuned so
+         "Enterprise Loyalty & CX" stays unbroken across the whole desktop range. */
+      .hero-copy h1{font-size:clamp(1.25rem,3.5vw,4.8rem);}
       .hero-copy h1 .line{display:block;}
+      /* Just above the mobile breakpoint the 46% column leaves the headline only a
+         few pixels of slack, so give it more room before the layout stacks. */
+      @media (min-width:769px) and (max-width:1100px){
+         .hero-overlay{padding-left:max(var(--d-pad),39%);}
+      }
 
       /* pull-quote in the lower-left space vacated by the right-shifted copy */
       .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;z-index:4;max-width:min(42ch,42%);margin:0;padding:0;border:0;text-align:left;}
@@ -301,12 +304,14 @@
             bottom-anchored quote collide, so drop both out of absolute
             positioning and let them stack in normal flow instead. */
          .screen-hero{display:flex;flex-direction:column;justify-content:flex-start;padding:112px 0 40px;}
-         .hero-overlay{position:relative;inset:auto;align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
+         .hero-overlay{position:relative;inset:auto;flex:0 0 auto;align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
          .hero-copy .d-eyebrow{flex-direction:row;}
          .hero-copy h1{font-size:clamp(1.2rem,6.2vw,2.6rem);}
-         /* Reserve room on the right for the fixed .contact-rail (site.css: right:16px,
-            44px buttons ≈ 70px footprint) so the quote never wraps under those icons. */
-         .hero-quote{position:relative;left:auto;bottom:auto;margin:40px 0 0;padding:0 var(--d-pad);
+         /* margin-top:auto pushes the quote to the foot of the hero screen, clear of
+            the headline. Reserve room on the right for the fixed .contact-rail
+            (site.css: right:16px, 44px buttons ≈ 70px footprint) so the quote never
+            wraps under those icons. */
+         .hero-quote{position:relative;left:auto;bottom:auto;margin:auto 0 0;padding:0 var(--d-pad);
             max-width:calc(100% - var(--d-pad) - 76px);}
          .scroll-hint{display:none;} /* would collide with the quote's last line; the quote's own arrow already signals to keep scrolling */
          .glass-panel { max-width: none; }
@@ -407,8 +412,7 @@
             <div class="hero-copy">
                <span class="d-eyebrow draco-anim d1">Enterprise Loyalty Partner</span>
                <h1 class="d-display draco-anim d2">
-                  <span class="line">Enterprise Loyalty</span>
-                  <span class="line">&amp; Customer Experience</span>
+                  <span class="line">Enterprise Loyalty &amp; CX</span>
                   <span class="line accent">Engineered.</span>
                </h1>
             </div>
