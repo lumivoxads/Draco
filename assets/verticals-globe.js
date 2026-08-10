@@ -14,7 +14,7 @@
       region: 'Asia',
       anchor: [105, 10],
       countryIds: ['392', '156', '356', '764', '360', '702', '410', '158', '704'],
-      verticals: ['Airline', 'Airport', 'Ecosystem', 'Hospitality', 'QSR', 'Retail', 'Retail / CPG']
+      verticals: ['Airline', 'Airport', 'Ecosystem', 'Hospitality', 'Retail / CPG']
     },
     {
       region: 'Central America',
@@ -32,19 +32,19 @@
       region: 'Europe',
       anchor: [15, 50],
       countryIds: ['826', '276', '250', '724', '380', '528', '616', '620', '752', '578'],
-      verticals: ['Airline', 'Ecosystem', 'Hospitality', 'Retail / CPG', 'Telco']
+      verticals: ['Airline', 'Ecosystem', 'Hospitality', 'Telco']
     },
     {
       region: 'Middle East',
       anchor: [55, 25],
       countryIds: ['784', '682', '634', '414', '512', '048', '376', '400', '364'],
-      verticals: ['Airline', 'Hospitality', 'QSR', 'Retail', 'Retail / CPG']
+      verticals: ['Airline', 'Hospitality', 'Retail', 'Retail / CPG']
     },
     {
       region: 'North America',
       anchor: [-98, 45],
       countryIds: ['840', '124'],
-      verticals: ['Airline', 'Ecosystem', 'Hospitality']
+      verticals: ['Airline', 'Hospitality']
     }
   ];
 

@@ -21,6 +21,15 @@
    var HERO_SCRIM = '0.15';
    var REGION_SCRIM = '0.7';
 
+   var scrollHint = document.querySelector('.scroll-hint');
+   if (scrollHint) {
+      scrollHint.addEventListener('click', function () {
+         var next = document.querySelector('.screen[data-screen="1"]');
+         if (!next) return;
+         next.scrollIntoView({ behavior: isReduced ? 'auto' : 'smooth', block: 'start' });
+      });
+   }
+
    if (isReduced) {
       // Everything stacks and is visible at once; the poster still stands in for
       // the video (assets/site.css and index.html handle the presentation).

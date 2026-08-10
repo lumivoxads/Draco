@@ -7,7 +7,11 @@
    <title>Draco — Enterprise Loyalty Solutions Partner</title>
    <meta name="description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="shortcut icon" type="image/x-icon" href="template/assets/img/logo/favicon.png">
+   <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+   <link rel="manifest" href="site.webmanifest">
 
    <!-- SEO -->
    <link rel="canonical" href="https://www.draco.ae/">
@@ -29,6 +33,7 @@
    <meta name="twitter:title" content="Draco — Enterprise Loyalty Solutions Partner">
    <meta name="twitter:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
    <meta name="twitter:image" content="https://www.draco.ae/assets/og-image.jpg">
+   <meta name="twitter:image:alt" content="Draco — Enterprise Loyalty, Engineered.">
 
    <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
    <link rel="stylesheet" href="template/assets/css/main.css">
@@ -83,10 +88,15 @@
       .hero-quote .cta-line{font-size:clamp(1.15rem,1.8vw,1.45rem);color:var(--d-fg);margin:30px 0 0;line-height:1.4;}
       .hero-quote .cta-line i{color:var(--d-accent);margin-left:10px;}
 
-      .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;font-size:11px;letter-spacing:.2em;
-         text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;pointer-events:none;}
-      .scroll-hint i{animation:draco-pulse 2s ease-in-out infinite;}
-      @keyframes draco-pulse{0%,100%{opacity:.4}50%{opacity:1}}
+      .scroll-hint{position:absolute;left:50%;bottom:26px;z-index:4;font:inherit;font-size:11px;letter-spacing:.2em;
+         text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;
+         background:none;border:0;padding:8px 12px;cursor:pointer;pointer-events:auto;
+         transform:translateX(-50%);animation:scroll-hint-pulse 2s ease-in-out infinite;}
+      .scroll-hint:hover,.scroll-hint:focus-visible{color:var(--d-accent);outline:none;}
+      @keyframes scroll-hint-pulse{
+         0%,100%{opacity:.45;transform:translateX(-50%) translateY(0);color:var(--d-dim)}
+         50%{opacity:1;transform:translateX(-50%) translateY(5px);color:var(--d-fg)}
+      }
 
       /* region screens — the card is laid out by assets/verticals-globe.js
          (positionPanel) so it always clears the globe's disc */
@@ -103,6 +113,7 @@
          .stage-video{display:none;}
          .stage-scrim{opacity:.55;}
          .screen-region .glass-panel{opacity:1;transform:none;}
+         .scroll-hint{animation:none;opacity:.85;color:var(--d-fg);}
       }
       .reduced-motion .screen-region .screen-inner{height:auto;padding:80px var(--d-pad)!important;}
 
@@ -269,7 +280,7 @@
          "@id": "https://www.draco.ae/#organization",
          "name": "Draco",
          "url": "https://www.draco.ae/",
-         "logo": { "@type": "ImageObject", "url": "https://www.draco.ae/assets/og-image.jpg", "width": 1200, "height": 630 },
+         "logo": { "@type": "ImageObject", "url": "https://www.draco.ae/assets/logo/logo-black.png", "width": 1600, "height": 281 },
          "image": "https://www.draco.ae/assets/og-image.jpg",
          "description": "Draco is an enterprise loyalty solutions partner that designs and delivers loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that improve customer retention, strengthen brand loyalty and create long-term business value.",
          "slogan": "Creating meaningful connections that inspire loyalty",
@@ -367,7 +378,7 @@
             </p>
          </div>
 
-         <div class="scroll-hint"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</div>
+         <button type="button" class="scroll-hint" aria-label="Scroll to explore regions"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</button>
       </section>
 
       <!-- screens 1–7 — one per region. Card markup is static so every region
@@ -392,7 +403,7 @@
                <div class="panel-header"><h2 class="d-display region-name">Asia</h2></div>
                <div class="panel-content">
                   <div class="verticals-chips">
-                     <div class="v-chip">Airline</div><div class="v-chip">Airport</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">QSR</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
+                     <div class="v-chip">Airline</div><div class="v-chip">Airport</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail / CPG</div>
                   </div>
                </div>
             </div>
@@ -431,7 +442,7 @@
                <div class="panel-header"><h2 class="d-display region-name">Europe</h2></div>
                <div class="panel-content">
                   <div class="verticals-chips">
-                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail / CPG</div><div class="v-chip">Telco</div>
+                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Telco</div>
                   </div>
                </div>
             </div>
@@ -444,7 +455,7 @@
                <div class="panel-header"><h2 class="d-display region-name">Middle East</h2></div>
                <div class="panel-content">
                   <div class="verticals-chips">
-                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div><div class="v-chip">QSR</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
+                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
                   </div>
                </div>
             </div>
@@ -457,7 +468,7 @@
                <div class="panel-header"><h2 class="d-display region-name">North America</h2></div>
                <div class="panel-content">
                   <div class="verticals-chips">
-                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div>
+                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div>
                   </div>
                </div>
             </div>
