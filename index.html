@@ -1,0 +1,497 @@
+<!doctype html>
+<html class="cunnet-dark no-js" lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <title>Draco — Enterprise Loyalty Solutions Partner</title>
+   <meta name="description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+   <link rel="manifest" href="site.webmanifest">
+
+   <!-- SEO -->
+   <link rel="canonical" href="https://www.draco.ae/">
+   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+   <meta name="author" content="Draco">
+   <meta name="theme-color" content="#06070a">
+   <meta name="keywords" content="enterprise loyalty programs, customer loyalty solutions, loyalty ecosystem, customer engagement, rewards and recognition, membership programs, customer retention, loyalty consulting">
+   <meta property="og:type" content="website">
+   <meta property="og:site_name" content="Draco">
+   <meta property="og:title" content="Draco — Enterprise Loyalty Solutions Partner">
+   <meta property="og:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta property="og:url" content="https://www.draco.ae/">
+   <meta property="og:image" content="https://www.draco.ae/assets/og-image.jpg">
+   <meta property="og:image:width" content="1200">
+   <meta property="og:image:height" content="630">
+   <meta property="og:image:alt" content="Draco — Enterprise Loyalty, Engineered.">
+   <meta property="og:locale" content="en_US">
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="Draco — Enterprise Loyalty Solutions Partner">
+   <meta name="twitter:description" content="Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.">
+   <meta name="twitter:image" content="https://www.draco.ae/assets/og-image.jpg">
+   <meta name="twitter:image:alt" content="Draco — Enterprise Loyalty, Engineered.">
+
+   <link rel="stylesheet" href="template/assets/css/font-awesome-pro.css">
+   <link rel="stylesheet" href="template/assets/css/main.css">
+   <link rel="stylesheet" href="assets/site.css">
+
+   <style>
+      /* ---- home : one fixed video stage behind eight full-viewport snap screens ----
+         The video, the dimming scrim and the vector globe are a single fixed
+         instance each (.stage) that never scrolls. Only the .screen content moves.
+         See docs/superpowers/specs/2026-07-28-home-video-stage-design.md */
+      html{overflow-x:hidden;scroll-snap-type:y mandatory;}
+      .draco-header{position:fixed;top:0;left:0;right:0;z-index:30;}
+
+      /* the fixed stage — never scrolls, never duplicated per section */
+      .stage{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000;}
+      .stage-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+      /* dims the video so it reads as ambient texture behind the vector globe */
+      .stage-scrim{position:absolute;inset:0;background:#03040a;opacity:.15;transition:opacity .6s ease;}
+      canvas#globe-canvas{position:absolute;inset:0;display:block;opacity:0;transition:opacity .5s ease;}
+      /* top scrim so the nav stays legible over the bright planet */
+      .stage::after{content:"";position:absolute;top:0;left:0;right:0;height:160px;pointer-events:none;
+         background:linear-gradient(to bottom,rgba(3,4,6,.75),transparent);}
+
+      main#main{position:relative;z-index:2;}
+      .screen{position:relative;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;}
+
+      /* hero — directional wash so the copy stays legible over the moving planet */
+      .screen-hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:
+         linear-gradient(270deg, rgba(3,4,6,.92) 0%, rgba(3,4,6,.68) 40%, transparent 72%);}
+
+      /* copy column starts at 46% — the longest headline line ("Enterprise Loyalty",
+         ~10.5em wide) needs more room than the old two-word lines did, and the Earth
+         still clears it on the left */
+      .hero-overlay{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
+         align-items:flex-end;text-align:right;padding:0 var(--d-pad);padding-left:max(var(--d-pad),46%);}
+      .hero-copy .d-eyebrow{margin-bottom:22px;flex-direction:row-reverse;}
+      /* two-line headline: the offering, then the payoff. The vw term is tuned so
+         "Enterprise Loyalty & CX" stays unbroken across the whole desktop range. */
+      .hero-copy h1{font-size:clamp(1.25rem,3.5vw,4.8rem);}
+      .hero-copy h1 .line{display:block;}
+      /* Just above the mobile breakpoint the 46% column leaves the headline only a
+         few pixels of slack, so give it more room before the layout stacks. */
+      @media (min-width:769px) and (max-width:1100px){
+         .hero-overlay{padding-left:max(var(--d-pad),39%);}
+      }
+
+      /* pull-quote in the lower-left space vacated by the right-shifted copy */
+      .hero-quote{position:absolute;left:var(--d-pad);bottom:72px;z-index:4;max-width:min(42ch,42%);margin:0;padding:0;border:0;text-align:left;}
+      .hero-quote blockquote{margin:0;padding:0;border:0;}
+      .hero-quote p{margin:0;font-family:var(--d-ff-body);font-style:italic;font-size:clamp(.92rem,1.15vw,1.05rem);line-height:1.55;color:var(--d-muted);}
+      .hero-quote cite{display:block;margin-top:10px;font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--d-accent);}
+      .hero-quote .cta-line{font-size:clamp(1.15rem,1.8vw,1.45rem);color:var(--d-fg);margin:30px 0 0;line-height:1.4;}
+      .hero-quote .cta-line i{color:var(--d-accent);margin-left:10px;}
+
+      .scroll-hint{position:absolute;left:50%;bottom:26px;z-index:4;font:inherit;font-size:11px;letter-spacing:.2em;
+         text-transform:uppercase;color:var(--d-dim);display:flex;align-items:center;gap:10px;
+         background:none;border:0;padding:8px 12px;cursor:pointer;pointer-events:auto;
+         transform:translateX(-50%);animation:scroll-hint-pulse 2s ease-in-out infinite;}
+      .scroll-hint:hover,.scroll-hint:focus-visible{color:var(--d-accent);outline:none;}
+      @keyframes scroll-hint-pulse{
+         0%,100%{opacity:.45;transform:translateX(-50%) translateY(0);color:var(--d-dim)}
+         50%{opacity:1;transform:translateX(-50%) translateY(5px);color:var(--d-fg)}
+      }
+
+      /* region screens — the card is laid out by assets/verticals-globe.js
+         (positionPanel) so it always clears the globe's disc */
+      .screen-region .screen-inner{position:relative;z-index:3;width:100%;height:100%;
+         display:flex;align-items:center;justify-content:flex-end;}
+      .screen-region .glass-panel{opacity:0;transform:translateY(12px);
+         transition:opacity .45s ease, transform .45s ease;}
+      .screen-region.is-active .glass-panel{opacity:1;transform:none;}
+
+      /* reduced motion — no snapping, no video, everything stacked and visible */
+      @media (prefers-reduced-motion:reduce){
+         html{scroll-behavior:auto;scroll-snap-type:none;}
+         .screen{height:auto;scroll-snap-align:none;}
+         .stage-video{display:none;}
+         .stage-scrim{opacity:.55;}
+         .screen-region .glass-panel{opacity:1;transform:none;}
+         .scroll-hint{animation:none;opacity:.85;color:var(--d-fg);}
+      }
+      .reduced-motion .screen-region .screen-inner{height:auto;padding:80px var(--d-pad)!important;}
+
+      /* Glass Panel for Verticals Globe */
+      .glass-panel {
+         width: 100%;
+         max-width: 420px;
+         background: rgba(12, 15, 20, 0.6);
+         -webkit-backdrop-filter: blur(12px);
+         backdrop-filter: blur(12px);
+         border: 1px solid var(--d-line);
+         border-radius: 12px;
+         padding: 32px;
+         pointer-events: auto;
+         transition: opacity 0.4s ease;
+         /* the click-to-expand detail can grow taller than the viewport —
+            scroll inside the panel instead of overflowing into the fixed header */
+         max-height: 82vh;
+         overflow-y: auto;
+      }
+      .panel-header {
+         border-bottom: 1px solid var(--d-accent);
+         padding-bottom: 16px;
+         margin-bottom: 24px;
+      }
+      .panel-header h2 {
+         margin: 0;
+         font-size: 2rem;
+         color: var(--d-accent);
+      }
+      .verticals-chips {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 10px;
+      }
+      .v-chip {
+         font-family: var(--d-ff-body);
+         font-size: 0.9rem;
+         padding: 8px 16px;
+         border: 1px solid rgba(201, 169, 106, 0.5); /* gold hairline */
+         border-radius: 100px;
+         color: var(--d-fg);
+         background: transparent;
+         opacity: 0;
+         transform: translateY(10px);
+         transition: opacity 0.4s ease, transform 0.4s ease, background 0.25s ease, border-color 0.25s ease;
+         cursor: pointer;
+      }
+      .v-chip.show {
+         opacity: 1;
+         transform: translateY(0);
+      }
+      .v-chip:hover, .v-chip.active {
+         background: rgba(201, 169, 106, 0.14);
+         border-color: var(--d-accent);
+      }
+
+      /* click-to-expand vertical detail (assets/vertical-detail-preview.js) */
+      .vertical-detail {
+         margin-top: 20px;
+         padding-top: 20px;
+         border-top: 1px solid var(--d-line);
+         max-height: 0;
+         overflow: hidden;
+         opacity: 0;
+         transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease, padding-top 0.4s ease;
+      }
+      .vertical-detail.open {
+         margin-top: 20px;
+         padding-top: 20px;
+         max-height: 600px; /* comfortably above real content; outer .glass-panel scrolls, not this */
+         opacity: 1;
+      }
+      .vertical-detail .vd-close {
+         float: right;
+         background: none;
+         border: 0;
+         color: var(--d-muted);
+         font-size: 1.1rem;
+         cursor: pointer;
+         line-height: 1;
+         padding: 0 0 8px 8px;
+      }
+      .vertical-detail .vd-close:hover { color: var(--d-accent); }
+      .vertical-detail h3 {
+         margin: 0 0 12px;
+         font-size: 1.3rem;
+         color: var(--d-accent);
+         padding-right: 28px;
+      }
+      .vertical-detail p {
+         margin: 0 0 12px;
+         font-size: 0.92rem;
+         line-height: 1.6;
+         color: var(--d-muted);
+      }
+      .vertical-detail ul {
+         margin: 0 0 16px;
+         padding-left: 18px;
+      }
+      .vertical-detail li {
+         font-size: 0.88rem;
+         line-height: 1.55;
+         color: var(--d-muted);
+         margin-bottom: 8px;
+      }
+      .vertical-detail li strong { color: var(--d-fg); }
+      .vertical-detail .vd-cta {
+         display: inline-flex;
+         align-items: center;
+         gap: 8px;
+         margin-top: 4px;
+         padding: 10px 20px;
+         border-radius: 100px;
+         background: var(--d-accent);
+         color: #06070a;
+         font-size: 0.88rem;
+         font-weight: 600;
+         text-decoration: none;
+         transition: opacity 0.2s ease;
+      }
+      .vertical-detail .vd-cta:hover { opacity: 0.85; }
+
+      @media (max-width: 600px) {
+         .glass-panel { max-height: 74vh; }
+      }
+
+      /* Fallbacks (reduced motion, or topology failure) hide the globe and reveal
+         every card at once. The region cards are static markup, so nothing needs
+         to be restyled — assets/verticals-globe.js only adds .show to the chips. */
+
+      /* 768px, matching the mobile threshold assets/verticals-globe.js already uses.
+         Below this the 46% copy column is too narrow to hold the headline lines. */
+      @media (max-width:768px){
+         /* stacked layout puts the copy over the bright limb of the planet rather
+            than the dark corners, so add a flat wash under the directional fades */
+         .screen-hero::before{background:linear-gradient(to top, rgba(3,4,6,.88) 0%, transparent 55%),linear-gradient(to bottom, rgba(3,4,6,.82), transparent 62%),rgba(3,4,6,.45);}
+         /* On a narrow, tall viewport the top-anchored headline and the
+            bottom-anchored quote collide, so drop both out of absolute
+            positioning and let them stack in normal flow instead. */
+         .screen-hero{display:flex;flex-direction:column;justify-content:flex-start;padding:112px 0 40px;}
+         .hero-overlay{position:relative;inset:auto;flex:0 0 auto;align-items:flex-start;text-align:left;padding:0 var(--d-pad);}
+         .hero-copy .d-eyebrow{flex-direction:row;}
+         .hero-copy h1{font-size:clamp(1.2rem,6.2vw,2.6rem);}
+         /* margin-top:auto pushes the quote to the foot of the hero screen, clear of
+            the headline. Reserve room on the right for the fixed .contact-rail
+            (site.css: right:16px, 44px buttons ≈ 70px footprint) so the quote never
+            wraps under those icons. */
+         .hero-quote{position:relative;left:auto;bottom:auto;margin:auto 0 0;padding:0 var(--d-pad);
+            max-width:calc(100% - var(--d-pad) - 76px);}
+         .scroll-hint{display:none;} /* would collide with the quote's last line; the quote's own arrow already signals to keep scrolling */
+         .glass-panel { max-width: none; }
+      }
+
+   </style>
+
+   <!-- Structured data (SEO / AEO / GEO) -->
+   <script type="application/ld+json">
+   {
+     "@context": "https://schema.org",
+     "@graph": [
+       {
+         "@type": "Organization",
+         "@id": "https://www.draco.ae/#organization",
+         "name": "Draco",
+         "url": "https://www.draco.ae/",
+         "logo": { "@type": "ImageObject", "url": "https://www.draco.ae/assets/logo/logo-black.png", "width": 1600, "height": 281 },
+         "image": "https://www.draco.ae/assets/og-image.jpg",
+         "description": "Draco is an enterprise loyalty solutions partner that designs and delivers loyalty ecosystems — loyalty programs, memberships, rewards and engagement campaigns — that improve customer retention, strengthen brand loyalty and create long-term business value.",
+         "slogan": "Creating meaningful connections that inspire loyalty",
+         "email": "Rajesh.Rishi@Draco.ae",
+         "telephone": "+971504501195",
+         "areaServed": "Worldwide",
+         "knowsAbout": ["Customer loyalty programs", "Customer engagement", "Rewards and recognition", "Membership programs", "Customer retention", "Referral and advocacy", "Loyalty consulting"],
+         "contactPoint": {
+           "@type": "ContactPoint",
+           "telephone": "+971504501195",
+           "email": "Rajesh.Rishi@Draco.ae",
+           "contactType": "sales",
+           "availableLanguage": ["English"]
+         },
+         "makesOffer": [
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Enterprise Loyalty Programs", "description": "Full-lifecycle loyalty programs engineered for scale, from strategy through launch and optimisation." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Customer Engagement Strategies", "description": "Data-informed engagement models that turn passive customers into active, repeat advocates." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Membership & Privilege Programs", "description": "Tiered memberships and privilege schemes that recognise and reward valuable customers." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rewards & Recognition Solutions", "description": "Reward ecosystems that make every interaction feel earned and worthwhile." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Referral & Advocacy Programs", "description": "Programs that turn satisfied customers into a measurable growth channel." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Campaign Management", "description": "End-to-end campaign design and execution aligned to business objectives." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Performance Insights", "description": "Analytics and reporting that connect loyalty activity to business outcomes." } },
+           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Loyalty Consulting", "description": "Strategic guidance to build the right loyalty model from the ground up." } }
+         ]
+       },
+       {
+         "@type": "WebSite",
+         "@id": "https://www.draco.ae/#website",
+         "url": "https://www.draco.ae/",
+         "name": "Draco",
+         "description": "Enterprise loyalty solutions partner. Loyalty ecosystems that turn customer engagement into lasting business value.",
+         "publisher": { "@id": "https://www.draco.ae/#organization" },
+         "inLanguage": "en"
+       },
+       {
+         "@type": "WebPage",
+         "@id": "https://www.draco.ae/#webpage",
+         "url": "https://www.draco.ae/",
+         "name": "Draco — Enterprise Loyalty Solutions Partner",
+         "isPartOf": { "@id": "https://www.draco.ae/#website" },
+         "about": { "@id": "https://www.draco.ae/#organization" },
+         "primaryImageOfPage": "https://www.draco.ae/assets/og-image.jpg",
+         "description": "Draco designs and delivers the loyalty ecosystems that turn everyday customer engagement into lasting business value.",
+         "inLanguage": "en"
+       }
+     ]
+   }
+   </script>
+</head>
+
+<body class="draco-home">
+   <!-- header -->
+   <header class="draco-header">
+      <a class="draco-logo" href="index.html" aria-label="Draco home"><img src="assets/logo/logo-white.png" alt="Draco"></a>
+      <nav class="draco-nav" aria-label="Primary">
+         <a href="index.html" aria-current="page">Home</a>
+         <a href="about.html">About</a>
+         <a href="contact.html">Contact</a>
+      </nav>
+
+      <button class="draco-burger" id="dracoBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+   </header>
+
+   <!-- fixed stage: the video, the dimming scrim and the vector globe. One
+        instance for the whole page — it never scrolls and never pauses. -->
+   <div class="stage" aria-hidden="true">
+      <video class="stage-video" id="stage-video" autoplay muted loop playsinline preload="auto"
+             poster="assets/video/earth-poster.jpg">
+         <source src="assets/video/earth-loop.mp4" type="video/mp4">
+      </video>
+      <div class="stage-scrim" id="stage-scrim"></div>
+      <canvas id="globe-canvas"></canvas>
+   </div>
+
+   <main id="main">
+      <!-- screen 0 — hero: copy right, pull-quote lower-left -->
+      <section class="screen screen-hero" data-screen="0">
+         <div class="hero-overlay">
+            <div class="hero-copy">
+               <span class="d-eyebrow draco-anim d1">Enterprise Loyalty Partner</span>
+               <h1 class="d-display draco-anim d2">
+                  <span class="line">Enterprise Loyalty &amp; CX</span>
+                  <span class="line accent">Engineered.</span>
+               </h1>
+            </div>
+         </div>
+
+         <div class="hero-quote draco-anim d3">
+            <blockquote>
+               <p>"When setting out on a journey, do not seek advice from someone who has never left home"</p>
+               <cite>— Rumi</cite>
+            </blockquote>
+            <p class="cta-line">
+               Connect with us and speak to someone who has not been home for a very long time. <i class="fa-regular fa-arrow-down-right"></i>
+            </p>
+         </div>
+
+         <button type="button" class="scroll-hint" aria-label="Scroll to explore regions"><i class="fa-regular fa-arrow-down"></i> Scroll to explore</button>
+      </section>
+
+      <!-- screens 1–7 — one per region. Card markup is static so every region
+           is present without JavaScript; assets/home-stage.js only toggles
+           .is-active and tells the globe which anchor to turn to. -->
+      <section class="screen screen-region" data-screen="1" data-region="0">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Africa</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">BFSI</div><div class="v-chip">Fuel</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="2" data-region="1">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Asia</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Airport</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="3" data-region="2">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Central America</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">QSR</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="4" data-region="3">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Central Asia</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="5" data-region="4">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Europe</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Ecosystem</div><div class="v-chip">Hospitality</div><div class="v-chip">Telco</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="6" data-region="5">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">Middle East</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div><div class="v-chip">Retail</div><div class="v-chip">Retail / CPG</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section class="screen screen-region" data-screen="7" data-region="6">
+         <div class="screen-inner">
+            <div class="glass-panel">
+               <div class="panel-header"><h2 class="d-display region-name">North America</h2></div>
+               <div class="panel-content">
+                  <div class="verticals-chips">
+                     <div class="v-chip">Airline</div><div class="v-chip">Hospitality</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+   </main>
+
+   <!-- mobile menu -->
+   <div class="draco-mobile" id="dracoMobile">
+      <button class="close" id="dracoClose" aria-label="Close menu"><i class="fa-regular fa-xmark"></i></button>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+   </div>
+
+   <!-- Lenis and scroll-loop.js are deliberately not loaded here: inertial
+        smoothing fights CSS scroll snapping. about.html and contact.html keep them. -->
+   <script src="assets/site.js"></script>
+   <script src="assets/vendor/d3-array.min.js"></script>
+   <script src="assets/vendor/d3-geo.min.js"></script>
+   <script src="assets/vendor/topojson-client.min.js"></script>
+   <script src="assets/verticals-globe.js"></script>
+   <script src="assets/home-stage.js"></script>
+   <script src="assets/vertical-detail-preview.js"></script>
+</body>
+</html>

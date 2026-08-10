@@ -1,0 +1,17 @@
+.DS_Store
+
+# Agent scratch — screenshot tooling and captures, not part of the static site
+node_modules/
+package.json
+package-lock.json
+screenshot.js
+generate_lab.py
+.playwright-mcp/
+
+# Raw source video dropped straight into assets/ is scratch and is not committed.
+# The shipped background loop lives in assets/video/ and IS committed — this
+# pattern is deliberately one level deep so it never swallows that file.
+assets/*.mp4
+
+.claude/settings.local.json
+assets/earth-frames/dark-prev-earth/
